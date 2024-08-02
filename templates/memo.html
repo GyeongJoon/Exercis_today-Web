@@ -14,7 +14,9 @@
         <br>
         <input type="submit" value="저장">
     </form>
-    
-    <a href="{{ url_for('main', year=year, month=month) }}">달력으로 돌아가기</a>
+    <form method="post" action="{{ url_for('delete_memo') }}">
+        <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
+        <input type="submit" value="삭제">
+    </form>
 </body>
 </html>

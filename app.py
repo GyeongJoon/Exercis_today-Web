@@ -1,7 +1,6 @@
-from flask import Flask, session, request, redirect, url_for, render_template, jsonify
+from flask import Flask, session, request, redirect, url_for, render_template
 from flask_session import Session
 import mysql.connector
-from mysql.connector import Error
 from werkzeug.security import generate_password_hash, check_password_hash
 import calendar
 from datetime import datetime
@@ -145,7 +144,31 @@ def update_memo():
     db.close()
     
     year, month, day = map(int, date.split('-'))
-    return redirect(url_for('memo', year=year, month=month, day=day))
+    return redirect(url_for('main', year=year, month=month, day=day))
+
+@app.route('/delete_memo', methods=['POST'])
+def delete_memo():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    date = request.form['date']
+    
+    db = get_db_connection()
+    cursor = db.cursor()
+    
+    cursor.execute("SELECT * FROM memos WHERE user_id = %s AND date = %s", (session['user_id'], date))
+    existing_memo = cursor.fetchone()
+    
+    if existing_memo:
+        cursor.execute("DELETE FROM memos WHERE user_id = %s AND date = %s", (session['user_id'], date))
+        
+    db.commit()
+    cursor.close()
+    db.close()
+    
+    year, month, day = map(int, date.split('-'))
+    return redirect(url_for('main', year=year, month=month, day=day))
+    
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)
