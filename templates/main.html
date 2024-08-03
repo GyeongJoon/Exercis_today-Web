@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <title>달력</title>
     <style>
         table { border-collapse: collapse; }
@@ -12,36 +13,67 @@
     </style>
 </head>
 <body>
-    <h1>{{ year }}년 {{ month }}월</h1>
-    
-    <div>
-        <a href="{{ url_for('main', year=prev_year, month=prev_month) }}">&lt; 이전 달</a>
-        <a href="{{ url_for('main', year=next_year, month=next_month) }}">다음 달 &gt;</a>
-    </div>
-    
-    <table>
-        <tr>
-            <th>일</th>
-            <th>월</th>
-            <th>화</th>
-            <th>수</th>
-            <th>목</th>
-            <th>금</th>
-            <th>토</th>
-        </tr>
-        {% for week in calendar %}
-            <tr>
-                {% for day in week %}
-                    {% if day == 0 %}
-                        <td></td>
-                    {% else %}
-                        <td {% if year == now.year and month == now.month and day == now.day %}class="today"{% endif %}>
-                            <a href="{{ url_for('memo', year=year, month=month, day=day) }}">{{ day }}</a>
-                        </td>
-                    {% endif %}
+    <header>
+        <div class="header-left">
+            <h3>운동알려줘</h3>
+        </div>
+        <div class="header-right">
+            {% if session['user_id'] %}
+                <span>{{ session['user_id'] }} {% if session['role'] == 'admin' %}(관리자){% endif %}</span>
+                <form method="POST" action="{{ url_for('logout') }}" style="margin-left: 10px;">
+                    <button type="submit" style="padding: 5px 10px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;">Logout</button>
+                </form>
+            {% else %}
+                <span>Not logged in</span>
+            {% endif %}
+        </div>
+    </header>
+    <div class="container">
+        <nav>
+            <div class="nav-left">
+                <h2>오운완</h2>
+            </div>
+            <ul>
+                <li><a href="{{ url_for('main') }}">운동일정</a></li>
+                <li><a>운동봇</a></li>
+            </ul>
+        </nav>
+        <main>
+            <h1>{{ year }}년 {{ month }}월</h1>
+            
+            <div>
+                <a href="{{ url_for('main', year=prev_year, month=prev_month) }}">&lt; 이전 달</a>
+                <a href="{{ url_for('main', year=next_year, month=next_month) }}">다음 달 &gt;</a>
+            </div>
+        
+            <table>
+                <tr>
+                    <th>일</th>
+                    <th>월</th>
+                    <th>화</th>
+                    <th>수</th>
+                    <th>목</th>
+                    <th>금</th>
+                    <th>토</th>
+                </tr>
+                {% for week in calendar %}
+                    <tr>
+                        {% for day in week %}
+                            {% if day == 0 %}
+                                <td></td>
+                            {% else %}
+                                <td {% if year == now.year and month == now.month and day == now.day %}class="today"{% endif %}>
+                                    <a href="{{ url_for('memo', year=year, month=month, day=day) }}">{{ day }}</a>
+                                </td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
                 {% endfor %}
-            </tr>
-        {% endfor %}
-    </table>
+            </table>
+        </main>
+    </div>
+    <footer>
+        &copy; 2024 Dr. Gabkeun, Choi. Copyright All rights reserved.
+    </footer>
 </body>
 </html>

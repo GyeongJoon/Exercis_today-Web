@@ -63,10 +63,11 @@ def login():
             return 'Invalid credentials'
     return render_template('login.html')
 
-@app.route('/logout')
+@app.route('/logout', methods=['GET', 'POST'])
 def logout():
     session.pop('user_id', None)
     session.pop('username', None)
+    session.pop('password', None)
     return redirect(url_for('login'))
 
 @app.route('/main')
