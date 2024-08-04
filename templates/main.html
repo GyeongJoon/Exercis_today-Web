@@ -18,8 +18,8 @@
             <h3>운동알려줘</h3>
         </div>
         <div class="header-right">
-            {% if session['user_id'] %}
-                <span>{{ session['user_id'] }} {% if session['role'] == 'admin' %}(관리자){% endif %}</span>
+            {% if session['username'] %}
+                <span>{{ session['username'] }}</span>
                 <form method="POST" action="{{ url_for('logout') }}" style="margin-left: 10px;">
                     <button type="submit" style="padding: 5px 10px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;">Logout</button>
                 </form>
@@ -35,7 +35,7 @@
             </div>
             <ul>
                 <li><a href="{{ url_for('main') }}">운동일정</a></li>
-                <li><a>운동봇</a></li>
+                <li><a  >운동봇</a></li>
             </ul>
         </nav>
         <main>

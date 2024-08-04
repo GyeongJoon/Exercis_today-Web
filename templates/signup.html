@@ -9,6 +9,18 @@
 <body>
     <div class="container">
         <h2>Sign Up</h2>
+        <script>
+            window.onload = function() {
+                // JavaScript로 플래시 메시지를 확인하고 알림창을 띄우기
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            alert('{{ message }}');
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            }
+        </script>
         <form method="POST">
             <div class="form-group">
                 <label for="username">Username:</label>

@@ -8,6 +8,18 @@
 </head>
 <body>
     <h2>Log In</h2>
+    <script>
+        window.onload = function() {
+            // JavaScript로 플래시 메시지를 확인하고 알림창을 띄우기
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        alert('{{ message }}');
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        }
+    </script>
     <form method="POST">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>

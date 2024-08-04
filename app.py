@@ -1,4 +1,4 @@
-from flask import Flask, session, request, redirect, url_for, render_template
+from flask import Flask, session, request, redirect, url_for, render_template, flash
 from flask_session import Session
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -34,6 +34,15 @@ def signup():
 
         db = get_db_connection()
         cursor = db.cursor()
+        cursor.execute("SELECT * FROM user WHERE username = %s", (username,))
+        existing_user = cursor.fetchone()
+        
+        if existing_user:
+            flash('아이디 중복')
+            cursor.close()
+            db.close()
+            return redirect(url_for('signup'))
+        
         cursor.execute("INSERT INTO user (username, password) VALUES (%s, %s)", (username, hashed_password))
         db.commit()
         cursor.close()
@@ -60,7 +69,8 @@ def login():
             session['username'] = user[1]
             return redirect(url_for('main'))
         else:
-            return 'Invalid credentials'
+            flash('로그인 실패')
+            return redirect(url_for('login'))
     return render_template('login.html')
 
 @app.route('/logout', methods=['GET', 'POST'])

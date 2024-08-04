@@ -7,17 +7,40 @@
     <title>메모 - {{ year }}년 {{ month }}월 {{ day }}일</title>
 </head>
 <body>
-    <h1>{{ year }}년 {{ month }}월 {{ day }}일 메모</h1>
-    
-    <form method="post" action="{{ url_for('update_memo') }}">
-        <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
-        <textarea name="memo" rows="10" cols="50">{{ memo.memo if memo else '' }}</textarea>
-        <br>
-        <input type="submit" value="저장">
-    </form>
-    <form method="post" action="{{ url_for('delete_memo') }}">
-        <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
-        <input type="submit" value="삭제">
-    </form>
+    <header>
+        <div class="header-left">
+            <h3>운동알려줘</h3>
+        </div>
+        <div class="header-right">
+            {% if session['user_id'] %}
+                <span>{{ session['user_id']}}</span>
+                <form method="POST" action="{{ url_for('logout') }}" style="margin-left: 10px;">
+                    <button type="submit" style="padding: 5px 10px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;">Logout</button>
+                </form>
+            {% else %}
+                <span>Not logged in</span>
+            {% endif %}
+        </div>
+    </header>
+    <div class="container">
+        <nav>
+        </nav>
+        <main>
+            <h1>{{ year }}년 {{ month }}월 {{ day }}일 메모</h1>
+            
+            <form method="post" action="{{ url_for('update_memo') }}">
+                <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
+                <textarea name="memo" rows="10" cols="50">{{ memo.memo if memo else '' }}</textarea>
+                <br>
+                <input type="submit" value="저장">
+            </form>
+            <form method="post" action="{{ url_for('delete_memo') }}">
+                <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
+                <input type="submit" value="삭제">
+            </form>
+        </main>
+    </div>
+    <footer>
+    </footer>
 </body>
 </html>

@@ -7,26 +7,8 @@
     <title>Home</title>
 </head>
 <body>
-    <header>
-    </header>
-    <div class="container">
-        <nav>
-            <div class="nav-left">
-                <h2>오운완</h2>
-            </div>
-            <ul>
-                <li><a href="{{ url_for('main') }}">운동일정</a></li>
-                <li><a>운동봇</a></li>
-            </ul>
-        </nav>
-    <main>
-        <h2>Welcome to the Application</h2>
-        <p><a href="{{ url_for('login') }}">Log In</a></p>
-        <p><a href="{{ url_for('signup') }}">Sign Up</a></p>
-    </main>
-    </div>
-    <footer>
-        &copy; 2024 Dr. Gabkeun, Choi. Copyright All rights reserved.
-    </footer>
+    <h2>Welcome to the Application</h2>
+    <p><a href="{{ url_for('login') }}">Log In</a></p>
+    <p><a href="{{ url_for('signup') }}">Sign Up</a></p>
 </body>
 </html>
