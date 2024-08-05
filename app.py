@@ -29,43 +29,56 @@ def index():
 def signup():
     if request.method == 'POST':
         username = request.form['username']
+        user_id = request.form['user_id']
         password = request.form['password']
-        hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
-
-        db = get_db_connection()
-        cursor = db.cursor()
-        cursor.execute("SELECT * FROM user WHERE username = %s", (username,))
-        existing_user = cursor.fetchone()
+        confirm_password = request.form['confirm_password']
+        email = request.form['email']
+        phone = request.form['phone']
+        birth = request.form['birth']
+        gender = request.form['gender']
+        height = request.form['height']
+        weight = request.form['weight']
         
-        if existing_user:
-            flash('아이디 중복')
+        if password == confirm_password:
+            hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
+
+            db = get_db_connection()
+            cursor = db.cursor()
+            cursor.execute("SELECT * FROM user WHERE username = %s", (user_id,))
+            existing_user = cursor.fetchone()
+            
+            if existing_user:
+                flash('아이디 중복')
+                cursor.close()
+                db.close()
+                return redirect(url_for('signup'))
+            
+            cursor.execute("INSERT INTO user (username, user_id, password, email, phone, birth, gender, height, weight) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", (username, user_id, hashed_password, email, phone, birth, gender, height, weight))
+            db.commit()
             cursor.close()
             db.close()
+            return redirect(url_for('login'))
+        else:
+            flash('비밀번호 불일치')
             return redirect(url_for('signup'))
-        
-        cursor.execute("INSERT INTO user (username, password) VALUES (%s, %s)", (username, hashed_password))
-        db.commit()
-        cursor.close()
-        db.close()
-
-        return redirect(url_for('login'))
+            
     return render_template('signup.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
+        user_id = request.form['user_id']
         password = request.form['password']
 
         db = get_db_connection()
         cursor = db.cursor()
-        cursor.execute("SELECT * FROM user WHERE username = %s", (username,))
+        cursor.execute("SELECT * FROM user WHERE user_id = %s", (user_id,))
         user = cursor.fetchone()
         cursor.close()
         db.close()
 
-        if user and check_password_hash(user[2], password):
-            session['user_id'] = user[0]
+        if user and check_password_hash(user[3], password):
+            session['id'] = user[0]
             session['username'] = user[1]
             return redirect(url_for('main'))
         else:
@@ -75,7 +88,7 @@ def login():
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
-    session.pop('user_id', None)
+    session.pop('id', None)
     session.pop('username', None)
     session.pop('password', None)
     return redirect(url_for('login'))

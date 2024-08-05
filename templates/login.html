@@ -7,7 +7,6 @@
     <title>Log In</title>
 </head>
 <body>
-    <h2>Log In</h2>
     <script>
         window.onload = function() {
             // JavaScript로 플래시 메시지를 확인하고 알림창을 띄우기
@@ -20,13 +19,16 @@
             {% endwith %}
         }
     </script>
-    <form method="POST">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <button type="submit">Log In</button>
-    </form>
-    <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign Up</a></p>
+    <div class="container">
+    <h2>Log In</h2>
+        <form method="POST">
+            <label for="user_id">아이디:</label>
+            <input type="text" id="user_id" name="user_id" required>
+            <label for="password">비밀번호:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Log In</button>
+        </form>
+        <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign Up</a></p>
+    </div>
 </body>
 </html>

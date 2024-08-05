@@ -13,7 +13,7 @@
         </div>
         <div class="header-right">
             {% if session['user_id'] %}
-                <span>{{ session['user_id']}}</span>
+                <span>{{ session['username']}}</span>
                 <form method="POST" action="{{ url_for('logout') }}" style="margin-left: 10px;">
                     <button type="submit" style="padding: 5px 10px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;">Logout</button>
                 </form>
@@ -29,14 +29,55 @@
             <h1>{{ year }}년 {{ month }}월 {{ day }}일 운동일지</h1>
             
             <form method="post" action="{{ url_for('update_memo') }}">
+                <label for="exercise1">운동 1</label>
                 <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
-                
-                <br>
+                {% if session['user_id'] %}
+                    <input type="hidden" name="user_id" value="{{ session['user_id'] }}">
+                {% endif %}
+                <select name="exercises1" id="exercise1">
+                    <optgroup label="first-choice">
+                        <option value="select">Select a exercise</option>
+                        <option value="upper_body">상체 전체 운동</option>
+                        <option value="chest">가슴 운동</option>
+                        <option value="back">등 운동</option>
+                        <option value="shoulder">어깨 운동</option>
+                        <option value="arm">팔 전체 운동</option>
+                        <option value="bicep">이두 운동</option>
+                        <option value="tricep">삼두 운동</option>
+                        <option value="lower_body">하체 운동</option>
+                    </optgroup>                   
+                </select>
+                <label for="exercise2">운동 2</label>
+                <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
+                <select name="exercises2" id="exercise2">
+                    <optgroup label="second-choice">
+                        <option value="select">Select a exercise</option>
+                        <option value="upper_body">상체 전체 운동</option>
+                        <option value="chest">가슴 운동</option>
+                        <option value="back">등 운동</option>
+                        <option value="shoulder">어깨 운동</option>
+                        <option value="arm">팔 전체 운동</option>
+                        <option value="bicep">이두 운동</option>
+                        <option value="tricep">삼두 운동</option>
+                        <option value="lower_body">하체 운동</option>
+                    </optgroup>                    
+                </select>
+                <label for="exercise3">운동 3</label>
+                <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
+                <select name="exercises3" id="exercise3">
+                    <optgroup label="third-choice">
+                        <option value="select">Select a exercise</option>
+                        <option value="upper_body">상체 전체 운동</option>
+                        <option value="chest">가슴 운동</option>
+                        <option value="back">등 운동</option>
+                        <option value="shoulder">어깨 운동</option>
+                        <option value="arm">팔 전체 운동</option>
+                        <option value="bicep">이두 운동</option>
+                        <option value="tricep">삼두 운동</option>
+                        <option value="lower_body">하체 운동</option>
+                    </optgroup>                  
+                </select>
                 <input type="submit" value="저장">
-            </form>
-            <form method="post" action="{{ url_for('delete_memo') }}">
-                <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
-                <input type="submit" value="삭제">
             </form>
         </main>
     </div>
