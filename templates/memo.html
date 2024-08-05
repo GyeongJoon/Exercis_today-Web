@@ -26,11 +26,11 @@
         <nav>
         </nav>
         <main>
-            <h1>{{ year }}년 {{ month }}월 {{ day }}일 메모</h1>
+            <h1>{{ year }}년 {{ month }}월 {{ day }}일 운동일지</h1>
             
             <form method="post" action="{{ url_for('update_memo') }}">
                 <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
-                <textarea name="memo" rows="10" cols="50">{{ memo.memo if memo else '' }}</textarea>
+                
                 <br>
                 <input type="submit" value="저장">
             </form>

@@ -118,7 +118,6 @@ def memo(year, month, day):
     
     user_id = session['user_id']
     
-    # 데이터베이스에서 해당 날짜의 메모를 가져옵니다
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
     cursor.execute("SELECT * FROM memos WHERE user_id = %s AND date = %s", (user_id, date))
@@ -139,15 +138,12 @@ def update_memo():
     db = get_db_connection()
     cursor = db.cursor()
     
-    # 메모가 이미 존재하는지 확인
     cursor.execute("SELECT * FROM memos WHERE user_id = %s AND date = %s", (session['user_id'], date))
     existing_memo = cursor.fetchone()
     
     if existing_memo:
-        # 메모가 존재하면 업데이트
         cursor.execute("UPDATE memos SET memo = %s WHERE user_id = %s AND date = %s", (memo_text, session['user_id'], date))
     else:
-        # 메모가 없으면 새로 삽입
         cursor.execute("INSERT INTO memos (user_id, date, memo) VALUES (%s, %s, %s)", (session['user_id'], date, memo_text))
     
     db.commit()
