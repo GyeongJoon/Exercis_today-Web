@@ -7,6 +7,18 @@
     <title>메모 - {{ year }}년 {{ month }}월 {{ day }}일</title>
 </head>
 <body>
+    <script>
+        window.onload = function() {
+            // JavaScript로 플래시 메시지를 확인하고 알림창을 띄우기
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        alert('{{ message }}');
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        }
+    </script>
     <header>
         <div class="header-left">
             <h3>운동알려줘</h3>
@@ -24,6 +36,13 @@
     </header>
     <div class="container">
         <nav>
+            <div class="nav-left">
+                <h2>오운완</h2>
+            </div>
+            <ul>
+                <li><a href="{{ url_for('main') }}">운동일정</a></li>
+                <li><a>운동봇</a></li>
+            </ul>
         </nav>
         <main>
             <h1>{{ year }}년 {{ month }}월 {{ day }}일 운동일지</h1>
@@ -34,9 +53,8 @@
                 {% if session['user_id'] %}
                     <input type="hidden" name="user_id" value="{{ session['user_id'] }}">
                 {% endif %}
-                <select name="exercises1" id="exercise1">
+                <select name="exercise1" id="exercise1">
                     <optgroup label="first-choice">
-                        <option value="select">Select a exercise</option>
                         <option value="upper_body">상체 전체 운동</option>
                         <option value="chest">가슴 운동</option>
                         <option value="back">등 운동</option>
@@ -49,9 +67,8 @@
                 </select>
                 <label for="exercise2">운동 2</label>
                 <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
-                <select name="exercises2" id="exercise2">
+                <select name="exercise2" id="exercise2">
                     <optgroup label="second-choice">
-                        <option value="select">Select a exercise</option>
                         <option value="upper_body">상체 전체 운동</option>
                         <option value="chest">가슴 운동</option>
                         <option value="back">등 운동</option>
@@ -64,9 +81,8 @@
                 </select>
                 <label for="exercise3">운동 3</label>
                 <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
-                <select name="exercises3" id="exercise3">
+                <select name="exercise3" id="exercise3">
                     <optgroup label="third-choice">
-                        <option value="select">Select a exercise</option>
                         <option value="upper_body">상체 전체 운동</option>
                         <option value="chest">가슴 운동</option>
                         <option value="back">등 운동</option>
@@ -79,6 +95,22 @@
                 </select>
                 <input type="submit" value="저장">
             </form>
+            <form method="post" action="{{ url_for('delete_memo') }}">
+                <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
+                <input type="submit" value="삭제">
+            </form>
+            {% if exercises %}
+                <h2>오늘의 운동</h2>
+                <ul>
+                    {% for exercise in exercises %}
+                        <li>{{ exercise.exercise1 }}</li>
+                        <li>{{ exercise.exercise2 }}</li>
+                        <li>{{ exercise.exercise3 }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>저장된 운동이 없습니다.</p>
+            {% endif %}    
         </main>
     </div>
     <footer>
