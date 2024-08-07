@@ -53,8 +53,8 @@ def signup():
             hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
 
             db = get_db_connection()
-            cursor = db.cursor()
-            cursor.execute("SELECT * FROM user WHERE username = %s", (user_id,))
+            cursor = db.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM user WHERE user_id = %s", (user_id,))
             existing_user = cursor.fetchone()
             
             if existing_user:
@@ -81,31 +81,31 @@ def login():
         password = request.form['password']
 
         db = get_db_connection()
-        cursor = db.cursor()
+        cursor = db.cursor(dictionary=True)
         cursor.execute("SELECT * FROM user WHERE user_id = %s", (user_id,))
         user = cursor.fetchone()
         cursor.close()
         db.close()
 
-        if user and check_password_hash(user[3], password):
-            session['id'] = user[0]
-            session['username'] = user[1]
+        if user and check_password_hash(user['password'], password): ###
+            session['id'] = user['id']
+            session['username'] = user['username']
             return redirect(url_for('main'))
         else:
             flash('로그인 실패')
             return redirect(url_for('login'))
-    return render_template('main.html')
+    return render_template('login.html')
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     session.pop('id', None)
     session.pop('username', None)
+    session.pop('password', None)
     return redirect(url_for('login'))
-
 
 @app.route('/main')
 def main():
-    if 'user_id' not in session:
+    if 'id' not in session:
         return redirect(url_for('login'))
     
     year = request.args.get('year', type=int, default=datetime.now().year)
@@ -134,7 +134,7 @@ def main():
 
 @app.route('/memo/<int:year>/<int:month>/<int:day>')
 def memo(year, month, day):
-    if 'user_id' not in session:
+    if 'id' not in session:
         return redirect(url_for('login'))
     
     date = f"{year}-{month:02d}-{day:02d}"
@@ -156,7 +156,7 @@ def memo(year, month, day):
 
 @app.route('/update_memo', methods=['POST'])
 def update_memo():
-    if 'user_id' not in session:
+    if 'id' not in session:
         return redirect(url_for('login'))
     
     user_id = session['id']
@@ -187,7 +187,7 @@ def update_memo():
 
 @app.route('/delete_memo', methods=['POST'])
 def delete_memo():
-    if 'user_id' not in session:
+    if 'id' not in session:
         return redirect(url_for('login'))
     
     user_id = session['id']
