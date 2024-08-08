@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/memo.css') }}">
     <title>메모 - {{ year }}년 {{ month }}월 {{ day }}일</title>
+    <style>
+        .button-container {
+            display: flex;
+            gap: 10px; /* 버튼 간격을 조정할 수 있습니다. */
+        }
+
+        .button-container form {
+            display: inline;
+        }
+
+        .button-container input[type="submit"] {
+            margin: 0; /* 버튼 간의 여백 제거 */
+        }
+    </style>
 </head>
 <body>
     <script>
@@ -47,7 +61,7 @@
         <main>
             <h1>{{ year }}년 {{ month }}월 {{ day }}일 운동일지</h1>
             
-            <form method="post" action="{{ url_for('update_memo') }}">
+            <form method="post" action="{{ url_for('update_exercise') }}">
                 <label for="exercise1">운동 1</label>
                 <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
                 {% if session['user_id'] %}
@@ -95,10 +109,12 @@
                 </select>
                 <input type="submit" value="저장">
             </form>
-            <form method="post" action="{{ url_for('delete_memo') }}">
+            {% if exercises %}
+            <form method="post" action="{{ url_for('delete_exercise') }}">
                 <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
                 <input type="submit" value="삭제">
             </form>
+            {% endif %}
             {% if exercises %}
                 <h2>오늘의 운동</h2>
                 <ul>
@@ -110,7 +126,45 @@
                 </ul>
             {% else %}
                 <p>저장된 운동이 없습니다.</p>
-            {% endif %}    
+            {% endif %}
+            <div class="memo-container">
+                <form method="post" action="{{ url_for('update_memo') }}">
+                    <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
+                    <div>
+                        운동 종목: <br>
+                        <input type="text" name="exercise_name" value="{{ memo.exercise_name if memo else '' }}">
+                    </div>
+                    <div>
+                        세트 수: <br>
+                        <input type="text" name="exercise_set" value="{{ memo.exercise_set if memo else '' }}">
+                    </div>
+                    <div>
+                        무게(Kg): <br>
+                        <input type="text" name="exercise_weight" value="{{ memo.exercise_weight if memo else '' }}">
+                    </div>
+                    <div class="button-container">
+                        <input type="submit" value="저장">
+                    </div>
+                </form>
+                {% if memo %}
+                <form method="post" action="{{ url_for('delete_memo') }}">
+                    <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
+                    <div class="button-container">
+                        <input type="submit" value="삭제">
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+            <form action="{{ url_for('gpt_show') }}" method="post">
+                <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
+                <input type="submit" value="AI 운동 추천 받기">
+            </form>
+            {% if chatgpt_recommendation %}
+            <div class="chatgpt-recommendation">
+                <h3>ChatGPT 운동 추천:</h3>
+                <p>{{ chatgpt_recommendation }}</p>
+            </div>
+            {% endif %}
         </main>
     </div>
     <footer>
