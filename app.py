@@ -88,7 +88,7 @@ def login():
         cursor.close()
         db.close()
 
-        if user and check_password_hash(user['password'], password): ###
+        if user and check_password_hash(user['password'], password):
             session['id'] = user['id']
             session['username'] = user['username']
             return redirect(url_for('main'))
@@ -112,10 +112,8 @@ def main():
     year = request.args.get('year', type=int, default=datetime.now().year)
     month = request.args.get('month', type=int, default=datetime.now().month)
     
-    # 달력 정보 생성
     cal = calendar.monthcalendar(year, month)
     
-    # 이전 달과 다음 달 계산
     prev_month = month - 1 if month > 1 else 12
     prev_year = year if month > 1 else year - 1
     next_month = month + 1 if month < 12 else 1
@@ -171,23 +169,20 @@ def update_exercise():
     db = get_db_connection()
     cursor = db.cursor()
     
-    # 기존 운동 기록 삭제
     cursor.execute("DELETE FROM exercises WHERE user_id = %s AND date = %s", (user_id, date))
     cursor.execute("DELETE FROM memos WHERE user_id = %s AND date = %s", (user_id, date))
     
-    # 새 운동 기록 추가
     exercises = [request.form.get(f'exercise{i}', '') for i in range(1, 4)]
     cursor.execute("INSERT INTO exercises (user_id, date, exercise1, exercise2, exercise3) VALUES (%s, %s, %s, %s, %s)", 
                    (user_id, date, exercises[0], exercises[1], exercises[2]))
     
-    # 메모 추가
     for exercise_number in range(1, 4):
         for memo_id in range(5):
             exercise_name = request.form.get(f'exercise_name{exercise_number}_{memo_id}')
             exercise_set = request.form.get(f'exercise_set{exercise_number}_{memo_id}')
             exercise_weight = request.form.get(f'exercise_weight{exercise_number}_{memo_id}')
             
-            if exercise_name:  # 운동 이름이 있는 경우에만 저장
+            if exercise_name:
                 cursor.execute("INSERT INTO memos (user_id, date, exercise_number, memo_id, exercise_name, exercise_set, exercise_weight) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                                (user_id, date, exercise_number, memo_id, exercise_name, exercise_set, exercise_weight))
     
