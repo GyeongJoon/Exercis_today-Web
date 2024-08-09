@@ -5,20 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/memo.css') }}">
     <title>메모 - {{ year }}년 {{ month }}월 {{ day }}일</title>
-    <style>
-        .button-container {
-            display: flex;
-            gap: 10px; /* 버튼 간격을 조정할 수 있습니다. */
-        }
-
-        .button-container form {
-            display: inline;
-        }
-
-        .button-container input[type="submit"] {
-            margin: 0; /* 버튼 간의 여백 제거 */
-        }
-    </style>
 </head>
 <body>
     <script>
