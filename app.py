@@ -139,16 +139,16 @@ def memo(year, month, day):
         return redirect(url_for('login'))
     
     date = f"{year}-{month:02d}-{day:02d}"
-    
     user_id = session['id']
     
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT exercise1, exercise2, exercise3 FROM exercises WHERE user_id = %s AND date = %s", (user_id, date))
-    exercises = cursor.fetchall()
     
-    cursor.execute("SELECT * FROM memos WHERE user_id = %s AND date = %s", (user_id, date))
-    memo = cursor.fetchone()
+    cursor.execute("SELECT exercise1, exercise2, exercise3 FROM exercises WHERE user_id = %s AND date = %s", (user_id, date))
+    exercises = cursor.fetchone()
+    
+    cursor.execute("SELECT * FROM memos WHERE user_id = %s AND date = %s ORDER BY exercise_number, memo_id", (user_id, date))
+    memos = cursor.fetchall()
     
     cursor.execute("SELECT recommendation FROM exercise_recommendations WHERE user_id = %s AND date = %s ORDER BY id DESC LIMIT 1", (user_id, date))
     recommendation = cursor.fetchone()
@@ -156,12 +156,9 @@ def memo(year, month, day):
     
     cursor.close()
     db.close()
-    for exercise in exercises:
-        exercise['exercise1'] = exercise_map.get(exercise['exercise1'], exercise['exercise1'])
-        exercise['exercise2'] = exercise_map.get(exercise['exercise2'], exercise['exercise2'])
-        exercise['exercise3'] = exercise_map.get(exercise['exercise3'], exercise['exercise3'])
     
-    return render_template('memo.html', year=year, month=month, day=day, memo=memo, exercises=exercises, chatgpt_recommendation=chatgpt_recommendation)
+    year, month, day = map(int, date.split('-'))
+    return render_template('memo.html', year=year, month=month, day=day, exercises=exercises, memos=memos, chatgpt_recommendation=chatgpt_recommendation)
 
 @app.route('/update_exercise', methods=['POST'])
 def update_exercise():
@@ -169,22 +166,30 @@ def update_exercise():
         return redirect(url_for('login'))
     
     user_id = session['id']
-    
     date = request.form['date']
-    exercise1 = request.form['exercise1']
-    exercise2 = request.form['exercise2']
-    exercise3 = request.form['exercise3']
     
     db = get_db_connection()
     cursor = db.cursor()
     
-    cursor.execute("SELECT * FROM exercises WHERE user_id = %s AND date = %s", (user_id, date))
-    existing_memo = cursor.fetchone()
+    # 기존 운동 기록 삭제
+    cursor.execute("DELETE FROM exercises WHERE user_id = %s AND date = %s", (user_id, date))
+    cursor.execute("DELETE FROM memos WHERE user_id = %s AND date = %s", (user_id, date))
     
-    if existing_memo:
-        cursor.execute("UPDATE exercises SET exercise1 = %s, exercise2 = %s, exercise3 = %s WHERE user_id = %s AND date = %s", (exercise1,exercise2,exercise3, user_id, date))
-    else:
-        cursor.execute("INSERT INTO exercises (user_id, date, exercise1, exercise2, exercise3) VALUES (%s, %s, %s, %s, %s)", (user_id, date, exercise1, exercise2, exercise3))
+    # 새 운동 기록 추가
+    exercises = [request.form.get(f'exercise{i}', '') for i in range(1, 4)]
+    cursor.execute("INSERT INTO exercises (user_id, date, exercise1, exercise2, exercise3) VALUES (%s, %s, %s, %s, %s)", 
+                   (user_id, date, exercises[0], exercises[1], exercises[2]))
+    
+    # 메모 추가
+    for exercise_number in range(1, 4):
+        for memo_id in range(5):
+            exercise_name = request.form.get(f'exercise_name{exercise_number}_{memo_id}')
+            exercise_set = request.form.get(f'exercise_set{exercise_number}_{memo_id}')
+            exercise_weight = request.form.get(f'exercise_weight{exercise_number}_{memo_id}')
+            
+            if exercise_name:  # 운동 이름이 있는 경우에만 저장
+                cursor.execute("INSERT INTO memos (user_id, date, exercise_number, memo_id, exercise_name, exercise_set, exercise_weight) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                               (user_id, date, exercise_number, memo_id, exercise_name, exercise_set, exercise_weight))
     
     db.commit()
     cursor.close()
@@ -200,75 +205,14 @@ def delete_exercise():
         return redirect(url_for('login'))
     
     user_id = session['id']
-    
     date = request.form['date']
     
     db = get_db_connection()
     cursor = db.cursor()
     
-    cursor.execute("SELECT * FROM exercises WHERE user_id = %s AND date = %s", (user_id, date))
-    existing_memo = cursor.fetchone()
+    cursor.execute("DELETE FROM exercises WHERE user_id = %s AND date = %s", (user_id, date))
+    cursor.execute("DELETE FROM memos WHERE user_id = %s AND date = %s", (user_id, date))
     
-    if existing_memo:
-        cursor.execute("DELETE FROM exercises WHERE user_id = %s AND date = %s", (user_id, date))
-        
-    db.commit()
-    cursor.close()
-    db.close()
-    
-    flash('삭제 되었습니다.')
-    year, month, day = map(int, date.split('-'))
-    return redirect(url_for('memo', year=year, month=month, day=day))
-
-@app.route('/update_memo', methods=['POST'])
-def update_memo():
-    if 'id' not in session:
-        return redirect(url_for('login'))
-    
-    user_id = session['id']
-    
-    date = request.form['date']
-    exercise_name = request.form['exercise_name']
-    exercise_set = request.form['exercise_set']
-    exercise_weight = request.form['exercise_weight']
-    
-    db = get_db_connection()
-    cursor = db.cursor()
-    
-    cursor.execute("SELECT * FROM memos WHERE user_id = %s AND date = %s", (user_id, date))
-    existing_memo = cursor.fetchone()
-    
-    if existing_memo:
-        cursor.execute("UPDATE memos SET exercise_name = %s, exercise_set = %s, exercise_weight = %s WHERE user_id = %s AND date = %s", (exercise_name, exercise_set, exercise_weight, user_id, date))
-    else:
-        cursor.execute("INSERT INTO memos (user_id, date, exercise_name, exercise_set, exercise_weight) VALUES (%s, %s, %s, %s, %s)", (user_id, date, exercise_name, exercise_set, exercise_weight))
-    
-    db.commit()
-    cursor.close()
-    db.close()
-    
-    flash('저장 되었습니다.')
-    year, month, day = map(int, date.split('-'))
-    return redirect(url_for('memo', year=year, month=month, day=day))
-
-@app.route('/delete_memo', methods=['POST'])
-def delete_memo():
-    if 'id' not in session:
-        return redirect(url_for('login'))
-    
-    user_id = session['id']
-    
-    date = request.form['date']
-    
-    db = get_db_connection()
-    cursor = db.cursor()
-    
-    cursor.execute("SELECT * FROM memos WHERE user_id = %s AND date = %s", (user_id, date))
-    existing_memo = cursor.fetchone()
-    
-    if existing_memo:
-        cursor.execute("DELETE FROM memos WHERE user_id = %s AND date = %s", (user_id, date))
-        
     db.commit()
     cursor.close()
     db.close()

@@ -62,13 +62,16 @@
             <h1>{{ year }}년 {{ month }}월 {{ day }}일 운동일지</h1>
             
             <form method="post" action="{{ url_for('update_exercise') }}">
-                <label for="exercise1">운동 1</label>
                 <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
-                {% if session['user_id'] %}
-                    <input type="hidden" name="user_id" value="{{ session['user_id'] }}">
+                {% if session['id'] %}
+                    <input type="hidden" name="user_id" value="{{ session['id'] }}">
                 {% endif %}
-                <select name="exercise1" id="exercise1">
-                    <optgroup label="first-choice">
+            
+                {% for i in range(1, 4) %}
+                <div class="exercise-container">
+                    <label for="exercise{{ i }}">운동 {{ i }}</label>
+                    <select name="exercise{{ i }}" id="exercise{{ i }}">
+                        <option value="">선택하세요</option>
                         <option value="upper_body">상체 전체 운동</option>
                         <option value="chest">가슴 운동</option>
                         <option value="back">등 운동</option>
@@ -77,84 +80,70 @@
                         <option value="bicep">이두 운동</option>
                         <option value="tricep">삼두 운동</option>
                         <option value="lower_body">하체 운동</option>
-                    </optgroup>                   
-                </select>
-                <label for="exercise2">운동 2</label>
-                <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
-                <select name="exercise2" id="exercise2">
-                    <optgroup label="second-choice">
-                        <option value="upper_body">상체 전체 운동</option>
-                        <option value="chest">가슴 운동</option>
-                        <option value="back">등 운동</option>
-                        <option value="shoulder">어깨 운동</option>
-                        <option value="arm">팔 전체 운동</option>
-                        <option value="bicep">이두 운동</option>
-                        <option value="tricep">삼두 운동</option>
-                        <option value="lower_body">하체 운동</option>
-                    </optgroup>                    
-                </select>
-                <label for="exercise3">운동 3</label>
-                <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
-                <select name="exercise3" id="exercise3">
-                    <optgroup label="third-choice">
-                        <option value="upper_body">상체 전체 운동</option>
-                        <option value="chest">가슴 운동</option>
-                        <option value="back">등 운동</option>
-                        <option value="shoulder">어깨 운동</option>
-                        <option value="arm">팔 전체 운동</option>
-                        <option value="bicep">이두 운동</option>
-                        <option value="tricep">삼두 운동</option>
-                        <option value="lower_body">하체 운동</option>
-                    </optgroup>                  
-                </select>
-                <input type="submit" value="저장">
+                    </select>
+            
+                    <div id="exerciseOptions{{ i }}" class="exercise-options">
+                        {% for j in range(5) %}
+                        <div class="exercise-item">
+                            <input type="text" name="exercise_name{{ i }}_{{ j }}" placeholder="운동 종목">
+                            <input type="number" name="exercise_set{{ i }}_{{ j }}" placeholder="세트 수" min="1">
+                            <input type="number" name="exercise_weight{{ i }}_{{ j }}" placeholder="무게(Kg)" min="0" step="0.5">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            
+                <div class="button-container">
+                    <input type="submit" value="저장">
+                </div>
             </form>
+            
+            {% if exercises %}
+                <h2>오늘의 운동</h2>
+                <ul>
+                    {% if exercises.exercise1 %}
+                        <li>{{ exercises.exercise1 }}</li>
+                        <ul>
+                            {% for memo in memos %}
+                                {% if memo.exercise_number == 1 %}
+                                    <li>{{ memo.exercise_name }} - {{ memo.exercise_set }} 세트 - {{ memo.exercise_weight }}kg</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% if exercises.exercise2 %}
+                        <li>{{ exercises.exercise2 }}</li>
+                        <ul>
+                            {% for memo in memos %}
+                                {% if memo.exercise_number == 2 %}
+                                    <li>{{ memo.exercise_name }} - {{ memo.exercise_set }} 세트 - {{ memo.exercise_weight }}kg</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% if exercises.exercise3 %}
+                        <li>{{ exercises.exercise3 }}</li>
+                        <ul>
+                            {% for memo in memos %}
+                                {% if memo.exercise_number == 3 %}
+                                    <li>{{ memo.exercise_name }} - {{ memo.exercise_set }} 세트 - {{ memo.exercise_weight }}kg</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </ul>
+            {% else %}
+                <p>저장된 운동이 없습니다.</p>
+            {% endif %}
+            
             {% if exercises %}
             <form method="post" action="{{ url_for('delete_exercise') }}">
                 <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
                 <input type="submit" value="삭제">
             </form>
             {% endif %}
-            {% if exercises %}
-                <h2>오늘의 운동</h2>
-                <ul>
-                    {% for exercise in exercises %}
-                        <li>{{ exercise.exercise1 }}</li>
-                        <li>{{ exercise.exercise2 }}</li>
-                        <li>{{ exercise.exercise3 }}</li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>저장된 운동이 없습니다.</p>
-            {% endif %}
-            <div class="memo-container">
-                <form method="post" action="{{ url_for('update_memo') }}">
-                    <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
-                    <div>
-                        운동 종목: <br>
-                        <input type="text" name="exercise_name" value="{{ memo.exercise_name if memo else '' }}">
-                    </div>
-                    <div>
-                        세트 수: <br>
-                        <input type="text" name="exercise_set" value="{{ memo.exercise_set if memo else '' }}">
-                    </div>
-                    <div>
-                        무게(Kg): <br>
-                        <input type="text" name="exercise_weight" value="{{ memo.exercise_weight if memo else '' }}">
-                    </div>
-                    <div class="button-container">
-                        <input type="submit" value="저장">
-                    </div>
-                </form>
-                {% if memo %}
-                <form method="post" action="{{ url_for('delete_memo') }}">
-                    <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
-                    <div class="button-container">
-                        <input type="submit" value="삭제">
-                    </div>
-                </form>
-                {% endif %}
-            </div>
+
             <form action="{{ url_for('gpt_show') }}" method="post">
                 <input type="hidden" name="date" value="{{ '%04d-%02d-%02d'|format(year, month, day) }}">
                 <input type="submit" value="AI 운동 추천 받기">
