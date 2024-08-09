@@ -103,7 +103,7 @@
                 <h2>오늘의 운동</h2>
                 <ul>
                     {% if exercises.exercise1 %}
-                        <li>{{ exercises.exercise1 }}</li>
+                        <li>{{ exercise_map[exercises.exercise1] }}</li>
                         <ul>
                             {% for memo in memos %}
                                 {% if memo.exercise_number == 1 %}
@@ -113,7 +113,7 @@
                         </ul>
                     {% endif %}
                     {% if exercises.exercise2 %}
-                        <li>{{ exercises.exercise2 }}</li>
+                        <li>{{ exercise_map[exercises.exercise2] }}</li>
                         <ul>
                             {% for memo in memos %}
                                 {% if memo.exercise_number == 2 %}
@@ -123,7 +123,7 @@
                         </ul>
                     {% endif %}
                     {% if exercises.exercise3 %}
-                        <li>{{ exercises.exercise3 }}</li>
+                        <li>{{ exercise_map[exercises.exercise3] }}</li>
                         <ul>
                             {% for memo in memos %}
                                 {% if memo.exercise_number == 3 %}

@@ -158,7 +158,7 @@ def memo(year, month, day):
     db.close()
     
     year, month, day = map(int, date.split('-'))
-    return render_template('memo.html', year=year, month=month, day=day, exercises=exercises, memos=memos, chatgpt_recommendation=chatgpt_recommendation)
+    return render_template('memo.html', year=year, month=month, day=day, exercises=exercises, memos=memos, chatgpt_recommendation=chatgpt_recommendation, exercise_map=exercise_map)
 
 @app.route('/update_exercise', methods=['POST'])
 def update_exercise():
@@ -244,6 +244,11 @@ def gpt_show():
     cursor.close()
     db.close()
     
+    if not exercise_info:
+        flash('선택된 운동이 없습니다.')
+        year, month, day = map(int, date.split('-'))
+        return redirect(url_for('memo', year=year, month=month, day=day))
+    
     prompt = f"사용자 정보: 생년월일 {user_info['birth']}, 성별 {user_info['gender']}, 키 {user_info['height']}cm, 체중 {user_info['weight']}kg\n"
     prompt += f"선택한 운동: {exercise_info['exercise1']}, {exercise_info['exercise2']}, {exercise_info['exercise3']}\n"
     # if memo_info:
@@ -254,16 +259,15 @@ def gpt_show():
 
     db = get_db_connection()
     cursor = db.cursor()
+    
     cursor.execute("INSERT INTO exercise_recommendations (user_id, date, recommendation) VALUES (%s, %s, %s)", (user_id, date, recommendation))
     db.commit()
     
-    cursor.execute("SELECT recommendation FROM exercise_recommendations WHERE user_id = %s AND date = %s", (user_id, date))
-    chatgpt_recommendation = db.cursor()
     cursor.close()
     db.close()
 
     year, month, day = map(int, date.split('-'))
-    return redirect(url_for('memo', year=year, month=month, day=day, chatgpt_recommendation=chatgpt_recommendation))
+    return redirect(url_for('memo', year=year, month=month, day=day))
     
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)
