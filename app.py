@@ -101,7 +101,6 @@ def login():
 def logout():
     session.pop('id', None)
     session.pop('username', None)
-    session.pop('password', None)
     return redirect(url_for('login'))
 
 @app.route('/main')
@@ -142,10 +141,10 @@ def memo(year, month, day):
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
     
-    cursor.execute("SELECT exercise1, exercise2, exercise3 FROM exercises WHERE user_id = %s AND date = %s", (user_id, date))
+    cursor.execute("SELECT exercise_type FROM exercises WHERE user_id = %s AND date = %s", (user_id, date))
     exercises = cursor.fetchone()
     
-    cursor.execute("SELECT * FROM memos WHERE user_id = %s AND date = %s ORDER BY exercise_number, memo_id", (user_id, date))
+    cursor.execute("SELECT * FROM memos WHERE user_id = %s AND date = %s AND exercise_type", (user_id, date))
     memos = cursor.fetchall()
     
     cursor.execute("SELECT recommendation FROM exercise_recommendations WHERE user_id = %s AND date = %s ORDER BY id DESC LIMIT 1", (user_id, date))

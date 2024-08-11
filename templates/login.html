@@ -23,9 +23,9 @@
     <h2>Log In</h2>
         <form method="POST">
             <label for="user_id">아이디:</label>
-            <input type="text" id="user_id" name="user_id" required>
+            <input type="text" id="user_id" name="user_id" required><br>
             <label for="password">비밀번호:</label>
-            <input type="password" id="password" name="password" required>
+            <input type="password" id="password" name="password" required><br>
             <button type="submit">Log In</button>
         </form>
         <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign Up</a></p>
