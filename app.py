@@ -141,11 +141,16 @@ def memo(year, month, day):
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
     
-    cursor.execute("SELECT exercise_type FROM exercises WHERE user_id = %s AND date = %s", (user_id, date))
-    exercises = cursor.fetchone()
+    cursor.execute("SELECT id, description FROM exercise_types WHERE id = (SELECT exercise_type_id FROM user_exercises WHERE user_id = %s AND date = %s)", (user_id, date))
+    exercises = cursor.fetchall()
     
-    cursor.execute("SELECT * FROM memos WHERE user_id = %s AND date = %s AND exercise_type", (user_id, date))
-    memos = cursor.fetchall()
+    cursor.excute("SELECT exercise_number FROM user_exercises WHERE user_id = %s AND date = %s", (user_id, date))
+    exercise_number = cursor.fetchall()
+    
+    if exercise_number:
+        for i in range ##
+        cursor.execute("SELECT exercise_name, exercise_set, exercise_weight FROM exercise_items WHERE exercise_items = (SELECT id FROM user_exercises WHERE user_id = %s AND date = %s AND exercise_number = %s)", (user_id, date, exercise_number))
+        exercises_detail = cursor.fetchall()
     
     cursor.execute("SELECT recommendation FROM exercise_recommendations WHERE user_id = %s AND date = %s ORDER BY id DESC LIMIT 1", (user_id, date))
     recommendation = cursor.fetchone()
@@ -155,7 +160,7 @@ def memo(year, month, day):
     db.close()
     
     year, month, day = map(int, date.split('-'))
-    return render_template('memo.html', year=year, month=month, day=day, exercises=exercises, memos=memos, chatgpt_recommendation=chatgpt_recommendation, exercise_map=exercise_map)
+    return render_template('memo.html', year=year, month=month, day=day, exercises=exercises, exercises_detail=exercises_detail, chatgpt_recommendation=chatgpt_recommendation, exercise_map=exercise_map)
 
 @app.route('/update_exercise', methods=['POST'])
 def update_exercise():
@@ -166,32 +171,53 @@ def update_exercise():
     date = request.form['date']
     
     db = get_db_connection()
-    cursor = db.cursor()
     
-    cursor.execute("DELETE FROM exercises WHERE user_id = %s AND date = %s", (user_id, date))
-    cursor.execute("DELETE FROM memos WHERE user_id = %s AND date = %s", (user_id, date))
-    
-    exercises = [request.form.get(f'exercise{i}', '') for i in range(1, 4)]
-    cursor.execute("INSERT INTO exercises (user_id, date, exercise1, exercise2, exercise3) VALUES (%s, %s, %s, %s, %s)", 
-                   (user_id, date, exercises[0], exercises[1], exercises[2]))
-    
-    for exercise_number in range(1, 4):
-        for memo_id in range(5):
-            exercise_name = request.form.get(f'exercise_name{exercise_number}_{memo_id}')
-            exercise_set = request.form.get(f'exercise_set{exercise_number}_{memo_id}')
-            exercise_weight = request.form.get(f'exercise_weight{exercise_number}_{memo_id}')
+    try:
+        cursor = db.cursor()
+        
+        cursor.execute("DELETE FROM user_exercises WHERE user_id = %s AND date = %s", (user_id, date))
+        cursor.execute("DELETE FROM exercise_items WHERE user_exercise_id IN (SELECT id FROM user_exercises WHERE user_id = %s AND date = %s)", (user_id, date))
+        
+        exercise_types_name = [request.form.get(f'exercise_type{i}', '') for i in range(1, 4) if request.form.get(f'exercise_type{i}')]
+        
+        exercise_types_ids = []
+        for name in exercise_types_name:
+            if name:
+                sql = "SELECT id FROM exercise_types WHERE name = %s"
+                cursor.execute(sql, (name,))
+                result = cursor.fetchone()
+                if result:
+                    exercise_types_ids.append(result['id'])
+        
+        for exercise_number, exercise_type_id in enumerate(exercise_types_ids, start=1):
+            cursor.execute("INSERT INTO user_exercises (user_id, date, exercise_number, exercise_type_id) VALUES (%s, %s, %s, %s) RETURNING id", 
+                           (user_id, date, exercise_number, exercise_type_id))
+            user_exercise_id = cursor.fetchone()[0]
             
-            if exercise_name:
-                cursor.execute("INSERT INTO memos (user_id, date, exercise_number, memo_id, exercise_name, exercise_set, exercise_weight) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                               (user_id, date, exercise_number, memo_id, exercise_name, exercise_set, exercise_weight))
+            for set_number in range(1, 6):
+                exercise_name = request.form.get(f'exercise_name{exercise_number}_{set_number}')
+                exercise_set = request.form.get(f'exercise_set{exercise_number}_{set_number}')
+                exercise_weight = request.form.get(f'exercise_weight{exercise_number}_{set_number}')
+                
+                if exercise_name:
+                    cursor.execute("INSERT INTO exercise_items (user_exercise_id, exercise_name, exercise_set, exercise_weight) VALUES (%s, %s, %s, %s)",
+                                   (user_exercise_id, exercise_name, exercise_set, exercise_weight))
+        
+        db.commit()
+        
+    except Exception as e:
+        db.rollback()
+        print(f"An error occurred: {e}")
+        flash('오류가 발생했습니다.')
     
-    db.commit()
-    cursor.close()
-    db.close()
+    finally:
+        cursor.close()
+        db.close()
     
     flash('저장 되었습니다.')
     year, month, day = map(int, date.split('-'))
     return redirect(url_for('memo', year=year, month=month, day=day))
+
 
 @app.route('/delete_exercise', methods=['POST'])
 def delete_exercise():
@@ -204,8 +230,8 @@ def delete_exercise():
     db = get_db_connection()
     cursor = db.cursor()
     
-    cursor.execute("DELETE FROM exercises WHERE user_id = %s AND date = %s", (user_id, date))
-    cursor.execute("DELETE FROM memos WHERE user_id = %s AND date = %s", (user_id, date))
+    cursor.execute("DELETE FROM user_exercises WHERE user_id = %s AND date = %s", (user_id, date))
+    cursor.execute("DELETE FROM exercise_items WHERE user_exercise_id IN (SELECT id FROM user_exercises WHERE user_id = %s AND date = %s)", (user_id, date))
     
     db.commit()
     cursor.close()
@@ -215,7 +241,7 @@ def delete_exercise():
     year, month, day = map(int, date.split('-'))
     return redirect(url_for('memo', year=year, month=month, day=day))
 
-@app.route('/gpt_show', methods=['GET','POST'])
+@app.route('/gpt_show', methods=['GET', 'POST'])
 def gpt_show():
     if 'id' not in session:
         return redirect(url_for('login'))
@@ -229,39 +255,37 @@ def gpt_show():
     cursor.execute("SELECT birth, gender, height, weight FROM user WHERE id = %s", (user_id,))
     user_info = cursor.fetchone()
     
-    # cursor.execute("SELECT exercise_name, exercise_set, exercise_weight FROM memos WHERE user_id = %s AND date = %s", (user_id, date))
-    # memo_info = cursor.fetchone()
+    cursor.execute("SELECT exercise_type_id FROM user_exercises WHERE user_id = %s AND date = %s", (user_id, date))
+    exercise_type_ids = cursor.fetchall()
     
-    cursor.execute("SELECT exercise1, exercise2, exercise3 FROM exercises WHERE user_id = %s AND date = %s", (user_id, date))
-    exercise_info = cursor.fetchone()
-    
-    cursor.close()
-    db.close()
-    
-    if not exercise_info:
+    if not exercise_type_ids:
         flash('선택된 운동이 없습니다.')
         year, month, day = map(int, date.split('-'))
         return redirect(url_for('memo', year=year, month=month, day=day))
     
+    exercise_type_ids_list = [et['exercise_type_id'] for et in exercise_type_ids]
+    
+    cursor.execute("SELECT id, description FROM exercise_types WHERE id IN (%s)" % ','.join(['%s']*len(exercise_type_ids_list)), exercise_type_ids_list)
+    exercise_info = cursor.fetchall()
+    
+    exercise_info_text = ', '.join([info['description'] for info in exercise_info])
     prompt = f"사용자 정보: 생년월일 {user_info['birth']}, 성별 {user_info['gender']}, 키 {user_info['height']}cm, 체중 {user_info['weight']}kg\n"
-    prompt += f"선택한 운동: {exercise_info['exercise1']}, {exercise_info['exercise2']}, {exercise_info['exercise3']}\n"
-    # if memo_info:
-    #     prompt += f"오늘의 운동 기록: {memo_info['exercise_name']} {memo_info['exercise_set']}세트 {memo_info['exercise_weight']}kg\n"
-    prompt += "위 선택한 운동에 맞는 운동 종목 3가지씩 세트수랑 무게를 사용자 정보에 맞게 추천해줘."
+    prompt += f"선택한 운동: {exercise_info_text}\n"
+    prompt += "위 선택한 운동에 맞는 운동 종목 3가지씩 세트수랑 무게를 사용자 정보에 맞게 추천해줘. + 추가로 해당 운동 설명도 간략하게 알려줘."
 
     recommendation = ask_chatgpt(prompt)
 
-    db = get_db_connection()
-    cursor = db.cursor()
-    
-    cursor.execute("INSERT INTO exercise_recommendations (user_id, date, recommendation) VALUES (%s, %s, %s)", (user_id, date, recommendation))
-    db.commit()
-    
-    cursor.close()
-    db.close()
+    try:
+        cursor.execute("INSERT INTO exercise_recommendations (user_id, date, recommendation) VALUES (%s, %s, %s)", (user_id, date, recommendation))
+        db.commit()
+    finally:
+        cursor.close()
+        db.close()
 
+    flash('저장 되었습니다.')
     year, month, day = map(int, date.split('-'))
     return redirect(url_for('memo', year=year, month=month, day=day))
+
     
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)
