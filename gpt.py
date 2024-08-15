@@ -15,6 +15,6 @@ def ask_chatgpt(prompt):
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt}
         ],
-        max_tokens=800
+        max_tokens=2000
     )
     return response.choices[0].message["content"]

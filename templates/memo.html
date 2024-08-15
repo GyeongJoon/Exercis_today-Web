@@ -61,6 +61,7 @@
                             <input type="text" name="exercise_name{{ i }}_{{ j }}" placeholder="운동 종목">
                             <input type="number" name="exercise_set{{ i }}_{{ j }}" placeholder="세트 수" min="1">
                             <input type="number" name="exercise_weight{{ i }}_{{ j }}" placeholder="무게(Kg)" min="0" step="0.5">
+                            <input type="number" name="exercise_count{{ i }}_{{ j }}" placeholder="횟수(번)" min="1">
                         </div>
                         {% endfor %}
                     </div>
@@ -73,22 +74,16 @@
                 <div class="memo-column exercise-list">
                     <h2>오늘의 운동</h2>
                     {% if exercises %}
-                        <ul>
                         {% for exercise in exercises %}
-                            <li>
-                                {{ exercises.[exercise]['description'] }}: ##
-                                {% if memos.exercise_numder == {{ exercise }} %}
-                                <ul>
-                                    {% for memo in memos.exercise_numder %}
-                                    <li>
-                                    {{ memo.exercise_name }} - {{ memo.exercise_set }} 세트 - {{ memo.exercise_weight }}kg
-                                    </li>
-                                    {% endfor %}
-                                </ul>
-                                {% endif %}
-                            </li>
+                            <h3>{{ exercise.description }}</h3>
+                            {% if exercises_detail[exercise.exercise_number] %}
+                                {% for detail in exercises_detail[exercise.exercise_number] %}
+                                    <p>{{ detail.exercise_name }} - {{ detail.exercise_set }} 세트 - {{ detail.exercise_weight }}kg - {{ detail.exercise_count }}times</p>
+                                {% endfor %}
+                            {% else %}
+                                <p>세부 운동 정보가 없습니다.</p>
+                            {% endif %}
                         {% endfor %}
-                        </ul>
                     {% else %}
                         <p>저장된 운동이 없습니다.</p>
                     {% endif %}
@@ -110,7 +105,7 @@
                     <h2>AI 운동 추천</h2>
                     {% if chatgpt_recommendation %}
                         <div class="chatgpt-recommendation">
-                            {{ chatgpt_recommendation }}
+                            {{ chatgpt_recommendation | safe }}
                         </div>
                     {% else %}
                         <p>AI 추천이 없습니다.</p>
