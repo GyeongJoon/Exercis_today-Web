@@ -6,6 +6,9 @@ import calendar
 from datetime import datetime
 from gpt import ask_chatgpt
 
+# 운동 선택 안해도 되게 만들기
+# 
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'joon'
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -300,7 +303,7 @@ def gpt_show():
 각 운동 종류와 종목 사이, 그리고 각 운동 종목의 설명 뒤에는 빈 줄을 넣어 구분해주세요."""
 
     recommendation = ask_chatgpt(prompt)
-    recommendation = recommendation.replace('\n', '<br>')  # 줄바꿈을 HTML <br> 태그로 변환
+    recommendation = recommendation.replace('\n', '<br>')
 
     try:
         cursor.execute("INSERT INTO exercise_recommendations (user_id, date, recommendation) VALUES (%s, %s, %s)", (user_id, date, recommendation))

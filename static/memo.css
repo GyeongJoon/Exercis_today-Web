@@ -82,6 +82,7 @@ header {
     flex-grow: 1;
     padding: 20px;
     overflow-y: auto;
+    width: calc(100% - 180px);
 }
 
 .main-content h1 {
@@ -91,22 +92,19 @@ header {
 
 .exercise-input-container {
     display: flex;
-    flex-direction: row; /* 가로 배치 */
+    flex-direction: row;
     justify-content: space-between;
     margin-bottom: 20px;
     padding-bottom: 20px;
     border-bottom: 1px solid #ddd;
-    flex-wrap: nowrap; /* 줄바꿈을 없애고 가로로 배치 */
+    flex-wrap: nowrap;
+    gap: 20px;
 }
 
 .exercise-input {
-    flex: 1; /* 각 운동 입력 필드가 동일한 비율로 가로 공간을 차지 */
-    margin-right: 10px; /* 오른쪽에 여백을 추가 */
-    min-width: 200px; /* 각 입력 칸의 최소 너비 설정 */
-}
-
-.exercise-input:last-child {
-    margin-right: 0; /* 마지막 입력 필드의 오른쪽 여백 제거 */
+    flex: 1;
+    min-width: 0;
+    max-width: 30%;
 }
 
 .exercise-input h3 {
@@ -188,9 +186,15 @@ button:hover, input[type="submit"]:hover {
     .sidebar a {
         font-size: 16px;
     }
+    .main-content {
+        width: calc(100% - 150px);
+    }
+    .exercise-input-container {
+        flex-wrap: wrap;
+    }
     .exercise-input {
-        flex: none;
-        width: calc(33.33% - 10px); /* 각 입력 필드가 3분의 1씩 차지하도록 설정 */
+        flex-basis: calc(50% - 10px);
+        max-width: calc(50% - 10px);
     }
 }
 
@@ -201,9 +205,8 @@ button:hover, input[type="submit"]:hover {
     .sidebar a {
         font-size: 14px;
     }
-    .exercise-input {
-        flex: none;
-        width: calc(50% - 10px); /* 반응형에서 가로 배치가 깨지지 않도록 너비 조정 */
+    .main-content {
+        width: calc(100% - 120px);
     }
 }
 
@@ -227,13 +230,15 @@ button:hover, input[type="submit"]:hover {
     .sidebar a {
         font-size: 14px;
     }
-    .exercise-input {
+    .main-content {
         width: 100%;
-        margin-right: 0; /* 세로 배치 시 오른쪽 간격 제거 */
-        margin-bottom: 10px; /* 세로 배치 시 하단 간격 추가 */
     }
     .exercise-input-container {
-        flex-direction: column; /* 작은 화면에서는 다시 세로로 배치 */
+        flex-direction: column;
+    }
+    .exercise-input {
+        width: 100%;
+        max-width: none;
     }
     .memo-layout {
         flex-direction: column;
