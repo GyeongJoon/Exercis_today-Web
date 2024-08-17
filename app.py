@@ -5,9 +5,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import calendar
 from datetime import datetime
 from gpt import ask_chatgpt
+import pandas as pd
+from chart import create_chart
 
-# 운동 선택 안해도 되게 만들기
-# 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'joon'
@@ -23,6 +23,21 @@ db_config = {
 
 def get_db_connection():
     return mysql.connector.connect(**db_config)
+
+def fetch_data(query, params=None):
+    connection = get_db_connection()
+    if connection is None:
+        return []
+
+    try:
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute(query, params)
+        records = cursor.fetchall()
+        cursor.close()
+    finally:
+        connection.close()
+    
+    return records
 
 @app.route('/')
 def index():
@@ -282,25 +297,25 @@ def gpt_show():
     exercise_info_text = ', '.join([info['description'] for info in exercise_info])
     prompt = f"""사용자 정보: 생년월일 {user_info['birth']}, 성별 {user_info['gender']}, 키 {user_info['height']}cm, 체중 {user_info['weight']}kg
 
-선택한 운동: {exercise_info_text}
+                선택한 운동: {exercise_info_text}
 
-위 선택한 운동에 맞는 운동 종목 3가지씩 세트수랑 무게랑 횟수를 사용자 정보에 맞게 추천해주세요. 각 운동 종목에 대한 설명도 간략하게 추가해주세요. 
-다음 형식으로 응답해주세요:
+                위 선택한 운동에 맞는 운동 종목 3가지씩 세트수랑 무게랑 횟수를 사용자 정보에 맞게 추천해주세요. 각 운동 종목에 대한 설명도 간략하게 추가해주세요. 
+                다음 형식으로 응답해주세요:
 
-1. [운동 종류 1]
-   a. [운동 종목 1]: [세트 수]set ([횟수]times x [무게]kg)
-      설명: [간단한 설명]
+                1. [운동 종류 1]
+                a. [운동 종목 1]: [세트 수]set ([횟수]times x [무게]kg)
+                    설명: [간단한 설명]
 
-   b. [운동 종목 2]: [세트 수]set ([횟수]times x [무게]kg)
-      설명: [간단한 설명]
+                b. [운동 종목 2]: [세트 수]set ([횟수]times x [무게]kg)
+                    설명: [간단한 설명]
 
-   c. [운동 종목 3]: [세트 수]set ([횟수]times x [무게]kg)
-      설명: [간단한 설명]
+                c. [운동 종목 3]: [세트 수]set ([횟수]times x [무게]kg)
+                    설명: [간단한 설명]
 
-2. [운동 종류 2]
-   ...
+                2. [운동 종류 2]
+                ...
 
-각 운동 종류와 종목 사이, 그리고 각 운동 종목의 설명 뒤에는 빈 줄을 넣어 구분해주세요."""
+                각 운동 종류와 종목 사이, 그리고 각 운동 종목의 설명 뒤에는 빈 줄을 넣어 구분해주세요."""
 
     recommendation = ask_chatgpt(prompt)
     recommendation = recommendation.replace('\n', '<br>')
@@ -316,6 +331,26 @@ def gpt_show():
     year, month, day = map(int, date.split('-'))
     return redirect(url_for('memo', year=year, month=month, day=day))
 
+@app.route('/chart', methods=['GET', 'POST'])
+def chart():
+    if 'id' not in session:
+        return redirect(url_for('login'))
     
+    user_id = session['id']
+    
+    query = "SELECT id, description FROM exercise_types WHERE id IN (SELECT exercise_type_id FROM user_exercises WHERE user_id = %s)"
+    data = fetch_data(query, (user_id,))
+    df = pd.DataFrame(data)
+    
+    print(f"DataFrame content: {df}") 
+    
+    chart_filename = ''
+    if not df.empty:
+        chart_filename = create_chart(df, '운동 통계', '운동 종류', '횟수', 'id', 'description', color='blue', filename='exercise_chart.png')
+    
+    print(f"Chart filename to render: {chart_filename}")  # Debugging statement
+
+    return render_template('chart.html', chart_filename=chart_filename)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5002, debug=True)

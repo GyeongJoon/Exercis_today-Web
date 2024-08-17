@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <title>달력</title>
+    <title>오운뭐?</title>
 </head>
 <body>
     <header>
         <div class="header-content">
             <div class="header-left">
-                <h2>운동알려줘</h2>
+                <h2>오운뭐?</h2>
             </div>
             <div class="header-right">
                 {% if session['username'] %}
@@ -28,7 +28,7 @@
         <nav class="sidebar">
             <ul>
                 <li><a href="{{ url_for('main') }}">운동일정</a></li>
-                <li><a>운동봇</a></li>
+                <li><a href="{{ url_for('chart') }}">운동통계</a></li>
             </ul>
         </nav>
         <main class="main-content">

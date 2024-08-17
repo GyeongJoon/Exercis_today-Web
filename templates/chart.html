@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>운동 통계</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/memo.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="header-left">
+                <h2>오운뭐?</h2>
+            </div>
+            <div class="header-right">
+                {% if session['username'] %}
+                    <span>{{ session['username'] }}</span>
+                    <form action="{{ url_for('logout') }}" method="post">
+                        <button type="submit" class="logout_button">Logout</button>
+                    </form>
+                {% else %}
+                    <span>Not logged in</span>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <nav class="sidebar">
+            <ul>
+                <li><a href="{{ url_for('main') }}">운동일정</a></li>
+                <li><a href="{{ url_for('chart') }}">운동통계</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content" role="main">
+            <h1>{{ session['username'] }}님의<br>운동통계</h1>
+            <div class="chart-container">
+                <h3>운동 뭐했어?</h3>
+                {% if chart_filename %}
+                    <img src="{{ url_for('static', filename='images/' ~ chart_filename) }}" alt="Exercise Chart">
+                {% else %}
+                    <p>No incoming data available.</p>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</body>
+</html>
