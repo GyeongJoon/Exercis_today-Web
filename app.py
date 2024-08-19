@@ -338,17 +338,26 @@ def chart():
     
     user_id = session['id']
     
-    query = "SELECT id, description FROM exercise_types WHERE id IN (SELECT exercise_type_id FROM user_exercises WHERE user_id = %s)"
+    # 사용자의 운동 데이터를 가져오는 쿼리 수정
+    query = """
+    SELECT et.id, et.description, COUNT(ue.id) as count
+    FROM exercise_types et
+    JOIN user_exercises ue ON et.id = ue.exercise_type_id
+    WHERE ue.user_id = %s
+    GROUP BY et.id, et.description
+    """
     data = fetch_data(query, (user_id,))
     df = pd.DataFrame(data)
     
-    print(f"DataFrame content: {df}") 
+    print(f"DataFrame content: {df}")   
     
     chart_filename = ''
     if not df.empty:
-        chart_filename = create_chart(df, '운동 통계', '운동 종류', '횟수', 'id', 'description', color='blue', filename='exercise_chart.png')
+        chart_filename = create_chart(df, '운동 통계', '운동 종류', '횟수', 'description', 'count', color='blue', filename='exercise_chart.png')
+    else:
+        print("DataFrame is empty. No data to create chart.")
     
-    print(f"Chart filename to render: {chart_filename}")  # Debugging statement
+    print(f"Chart filename to render: {chart_filename}")
 
     return render_template('chart.html', chart_filename=chart_filename)
 

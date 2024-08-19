@@ -7,6 +7,18 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/memo.css') }}">
 </head>
 <body>
+    <script>
+        window.onload = function() {
+            // JavaScript로 플래시 메시지를 확인하고 알림창을 띄우기
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        alert('{{ message }}');
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        }
+    </script>
     <header>
         <div class="header-content">
             <div class="header-left">
