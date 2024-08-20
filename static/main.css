@@ -61,6 +61,7 @@ header {
     color: white;
     padding: 20px;
     height: 100%;
+    transition: all 0.3s ease;
 }
 
 .sidebar ul {
@@ -74,6 +75,11 @@ header {
 .sidebar a {
     color: white;
     text-decoration: none;
+    transition: font-size 0.3s ease;
+}
+
+.sidebar a:hover {
+    font-size: 1.1em;
 }
 
 .main-content {

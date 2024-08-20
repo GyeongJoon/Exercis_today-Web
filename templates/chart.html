@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>운동 통계</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/memo.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chart.css') }}">
 </head>
 <body>
     <header>
@@ -32,9 +32,9 @@
                 <li><a href="{{ url_for('chart') }}">운동통계</a></li>
             </ul>
         </nav>
-
-        <main class="main-content" role="main">
-            <h1>{{ session['username'] }}님의<br>운동통계</h1>
+ 
+        <main class="main-content" role="main"> 
+            <h1>{{ session['username'] }}님의 운동통계</h1>
             <div class="chart-container">
                 <h3>운동 뭐했어?</h3>
                 {% if chart_filename %}

@@ -64,6 +64,7 @@ def signup():
             cursor = db.cursor(dictionary=True)
             cursor.execute("SELECT * FROM user WHERE user_id = %s", (user_id,))
             existing_user = cursor.fetchone()
+            flash('회원가입 성공')
             
             if existing_user:
                 flash('아이디 중복')
@@ -161,7 +162,7 @@ def memo(year, month, day):
         cursor.execute("""
             SELECT exercise_name, exercise_set, exercise_weight , exercise_count
             FROM exercise_items 
-            WHERE user_exercise_id = (
+            WHERE user_exercise_id IN (
                 SELECT id FROM user_exercises 
                 WHERE user_id = %s AND date = %s AND exercise_number = %s
             )
@@ -338,16 +339,15 @@ def chart():
     
     user_id = session['id']
     
-    # 사용자의 운동 데이터를 가져오는 쿼리 수정
     query = """
-    SELECT et.id, et.description, COUNT(ue.id) as count
+    SELECT et.description, COUNT(ue.exercise_type_id) AS count
     FROM exercise_types et
     JOIN user_exercises ue ON et.id = ue.exercise_type_id
     WHERE ue.user_id = %s
-    GROUP BY et.id, et.description
+    GROUP BY et.description
     """
     data = fetch_data(query, (user_id,))
-    df = pd.DataFrame(data)
+    df = pd.DataFrame(data, columns=['description', 'count'])
     
     print(f"DataFrame content: {df}")   
     
@@ -356,10 +356,9 @@ def chart():
         chart_filename = create_chart(df, '운동 통계', '운동 종류', '횟수', 'description', 'count', color='blue', filename='exercise_chart.png')
     else:
         print("DataFrame is empty. No data to create chart.")
-    
-    print(f"Chart filename to render: {chart_filename}")
 
     return render_template('chart.html', chart_filename=chart_filename)
 
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5002, debug=True)
+    app.run(host='0.0.0.0', port=5003, debug=True)

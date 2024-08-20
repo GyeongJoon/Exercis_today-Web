@@ -78,6 +78,10 @@ header {
     transition: font-size 0.3s ease;
 }
 
+.sidebar a:hover {
+    font-size: 1.1em;
+}
+
 .main-content {
     flex-grow: 1;
     padding: 20px;
@@ -86,7 +90,6 @@ header {
 
 .main-content h1 {
     text-align: center;
-    margin-bottom: 20px;
 }
 
 .exercise-input-container {
@@ -191,10 +194,28 @@ button:hover, input[type="submit"]:hover {
     }
     .main-content {
         width: calc(100% - 150px);
+        margin-left: 150px;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .sidebar {
+        width: 120px;
+    }
+    .sidebar a {
+        font-size: 14px;
+    }
+    .main-content {
+        width: calc(100% - 120px);
+        margin-left: 120px;
     }
 }
 
 @media screen and (max-width: 768px) {
+    .main-content {
+        width: 100%;
+        margin-left: 0;
+    }
     .main-layout {
         flex-direction: column;
     }
@@ -213,9 +234,6 @@ button:hover, input[type="submit"]:hover {
     }
     .sidebar a {
         font-size: 14px;
-    }
-    .main-content {
-        width: 100%;
     }
     .exercise-container {
         flex-direction: column;
