@@ -328,7 +328,7 @@ def gpt_show():
         cursor.close()
         db.close()
 
-    flash('저장 되었습니다.')
+    flash('추천 완성되었습니다.')
     year, month, day = map(int, date.split('-'))
     return redirect(url_for('memo', year=year, month=month, day=day))
 

@@ -46,7 +46,7 @@
         </nav>
 
         <main class="main-content" role="main">
-            <h1>{{ year }}년 {{ month }}월 {{ day }}일<br>운동일지</h1>
+            <h1>{{ year }}년 {{ month }}월 {{ day }}일<br>운동 뭐해?</h1>
 
             <div class="exercise-input-container">
                 <form method="post" action="{{ url_for('update_exercise') }}">
@@ -94,7 +94,7 @@
                             <h3>{{ exercise.description }}</h3>
                             {% if exercises_detail[exercise.exercise_number] %}
                                 {% for detail in exercises_detail[exercise.exercise_number] %}
-                                    <p>{{ detail.exercise_name }} - {{ detail.exercise_set }} 세트 - {{ detail.exercise_weight }}kg - {{ detail.exercise_count }}times</p>
+                                    <p>{{ detail.exercise_name }} - {{ detail.exercise_set }} sets - {{ detail.exercise_weight }}kg - {{ detail.exercise_count }}times</p>
                                 {% endfor %}
                             {% else %}
                                 <p>세부 운동 정보가 없습니다.</p>

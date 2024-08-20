@@ -36,7 +36,7 @@
         <main class="main-content" role="main"> 
             <h1>{{ session['username'] }}님의 운동통계</h1>
             <div class="chart-container">
-                <h3>운동 뭐했어?</h3>
+                <h3>운동 몇 번했어?</h3>
                 {% if chart_filename %}
                     <img src="{{ url_for('static', filename='images/' ~ chart_filename) }}" alt="Exercise Chart">
                 {% else %}
