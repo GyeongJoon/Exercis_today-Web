@@ -89,7 +89,6 @@ p a:hover {
     color: #2980b9;
 }
 
-/* 수정된 체크박스 스타일 */
 form .checkbox-group {
     display: flex;
     align-items: flex-start;
@@ -111,7 +110,6 @@ form .checkbox-group label {
     line-height: 1.4;
 }
 
-/* 반응형 디자인 */
 @media (max-width: 768px) {
     .container {
         padding: 20px;

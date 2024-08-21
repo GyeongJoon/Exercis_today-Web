@@ -62,7 +62,7 @@ def signup():
 
             db = get_db_connection()
             cursor = db.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM user WHERE user_id = %s", (user_id,))
+            cursor.execute("SELECT * FROM users WHERE user_id = %s", (user_id,))
             existing_user = cursor.fetchone()
             flash('회원가입 성공')
             
@@ -72,7 +72,7 @@ def signup():
                 db.close()
                 return redirect(url_for('signup'))
             
-            cursor.execute("INSERT INTO user (username, user_id, password, email, phone, birth, gender, height, weight) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", (username, user_id, hashed_password, email, phone, birth, gender, height, weight))
+            cursor.execute("INSERT INTO users (username, user_id, password, email, phone, birth, gender, height, weight) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", (username, user_id, hashed_password, email, phone, birth, gender, height, weight))
             db.commit()
             cursor.close()
             db.close()
@@ -91,7 +91,7 @@ def login():
 
         db = get_db_connection()
         cursor = db.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM user WHERE user_id = %s", (user_id,))
+        cursor.execute("SELECT * FROM users WHERE user_id = %s", (user_id,))
         user = cursor.fetchone()
         cursor.close()
         db.close()
@@ -190,8 +190,8 @@ def update_exercise():
     cursor = db.cursor(dictionary=True)
     
     try:
-        cursor.execute("DELETE FROM user_exercises WHERE user_id = %s AND date = %s", (user_id, date))
         cursor.execute("DELETE FROM exercise_items WHERE user_exercise_id IN (SELECT id FROM user_exercises WHERE user_id = %s AND date = %s)", (user_id, date))
+        cursor.execute("DELETE FROM user_exercises WHERE user_id = %s AND date = %s", (user_id, date))
         
         exercise_types_name = [request.form.get(f'exercise_type{i}', '') for i in range(1, 4) if request.form.get(f'exercise_type{i}')]
         
