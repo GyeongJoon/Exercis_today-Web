@@ -190,7 +190,7 @@ def update_exercise():
     cursor = db.cursor(dictionary=True)
     
     try:
-        cursor.execute("DELETE FROM exercise_items WHERE user_exercise_id IN (SELECT id FROM user_exercises WHERE user_id = %s AND date = %s)", (user_id, date))
+        # cursor.execute("DELETE FROM exercise_items WHERE user_exercise_id IN (SELECT id FROM user_exercises WHERE user_id = %s AND date = %s)", (user_id, date))
         cursor.execute("DELETE FROM user_exercises WHERE user_id = %s AND date = %s", (user_id, date))
         
         exercise_types_name = [request.form.get(f'exercise_type{i}', '') for i in range(1, 4) if request.form.get(f'exercise_type{i}')]

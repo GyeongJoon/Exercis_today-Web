@@ -70,7 +70,7 @@
                                 <option value="triceps">삼두 운동</option>
                                 <option value="legs">하체 운동</option>
                             </select>
-                            {% for j in range(5) %}
+                            {% for j in range(1, 6) %}
                             <div class="exercise-item">
                                 <input type="text" name="exercise_name{{ i }}_{{ j }}" placeholder="운동 종목">
                                 <input type="number" name="exercise_set{{ i }}_{{ j }}" placeholder="세트 수" min="1">
