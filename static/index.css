@@ -90,7 +90,6 @@ p a:hover {
     color: #2980b9;
 }
 
-/* 반응형 디자인 */
 @media (max-width: 768px) {
     .container {
         padding: 20px;
