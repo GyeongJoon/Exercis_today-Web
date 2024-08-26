@@ -58,7 +58,7 @@
 ---
 
 ### **3\. E-R 다이어그램**
-
+![스크린샷 2024-08-21 110943](https://github.com/user-attachments/assets/d1a5c16a-fbec-4141-b223-bb299922c6a5)
 
 ---
 
