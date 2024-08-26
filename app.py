@@ -17,7 +17,7 @@ Session(app)
 db_config = {
     'user': 'joon',
     'password': '1234',
-    'host': 'localhost',
+    'host': '10.178.0.2',
     'database': 'backend'
 }
 
