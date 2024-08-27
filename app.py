@@ -17,7 +17,8 @@ Session(app)
 db_config = {
     'user': 'joon',
     'password': '1234',
-    'host': '10.178.0.2',
+    'host': 'host.docker.internal',  # 또는 실제 MariaDB 서버의 IP 주소
+    'port': 3306,
     'database': 'backend'
 }
 
@@ -273,21 +274,28 @@ def gpt_show():
         return redirect(url_for('login'))
     
     user_id = session['id']
-    date = request.form['date']
-    
+    date = request.form.get('date')
+
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
     
-    cursor.execute("SELECT birth, gender, height, weight FROM user WHERE id = %s", (user_id,))
+    cursor.execute("SELECT birth, gender, height, weight FROM users WHERE id = %s", (user_id,))
     user_info = cursor.fetchone()
+    
+    if user_info is None:
+        flash('사용자 정보가 없습니다.')
+        cursor.close()
+        db.close()
+        return redirect(url_for('memo', year=date.split('-')[0], month=date.split('-')[1], day=date.split('-')[2]))
     
     cursor.execute("SELECT exercise_type_id FROM user_exercises WHERE user_id = %s AND date = %s", (user_id, date))
     exercise_type_ids = cursor.fetchall()
     
     if not exercise_type_ids:
         flash('선택된 운동이 없습니다.')
-        year, month, day = map(int, date.split('-'))
-        return redirect(url_for('memo', year=year, month=month, day=day))
+        cursor.close()
+        db.close()
+        return redirect(url_for('memo', year=date.split('-')[0], month=date.split('-')[1], day=date.split('-')[2]))
     
     exercise_type_ids_list = [et['exercise_type_id'] for et in exercise_type_ids]
     
@@ -330,6 +338,7 @@ def gpt_show():
     flash('추천 완성되었습니다.')
     year, month, day = map(int, date.split('-'))
     return redirect(url_for('memo', year=year, month=month, day=day))
+
 
 @app.route('/chart', methods=['GET', 'POST'])
 def chart():
