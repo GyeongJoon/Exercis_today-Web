@@ -9,6 +9,11 @@ COPY requirements.txt requirements.txt
 
 # 종속성 설치
 RUN pip install --no-cache-dir -r requirements.txt
+RUN apt-get update && apt-get install -y locales
+RUN locale-gen ko_KR.UTF-8
+ENV LANG ko_KR.UTF-8
+ENV LANGUAGE ko_KR:ko
+ENV LC_ALL ko_KR.UTF-8
 
 # 애플리케이션 파일과 정적 파일을 작업 디렉토리로 복사
 COPY app.py app.py 

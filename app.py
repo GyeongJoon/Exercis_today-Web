@@ -8,7 +8,6 @@ from gpt import ask_chatgpt
 import pandas as pd
 from chart import create_chart
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'joon'
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -17,9 +16,10 @@ Session(app)
 db_config = {
     'user': 'joon',
     'password': '1234',
-    'host': 'db',
+    'host': 'localhost',
     'database': 'backend',
-    'charset': 'utf8mb4'
+    'charset': 'utf8mb4',
+    'collation': 'utf8mb4_unicode_ci'
 }
 
 def get_db_connection():
@@ -34,8 +34,8 @@ def fetch_data(query, params=None):
         cursor = connection.cursor(dictionary=True)
         cursor.execute(query, params)
         records = cursor.fetchall()
-        cursor.close()
     finally:
+        cursor.close()
         connection.close()
     
     return records
@@ -63,24 +63,23 @@ def signup():
 
             db = get_db_connection()
             cursor = db.cursor(dictionary=True)
+            
             cursor.execute("SELECT * FROM users WHERE user_id = %s", (user_id,))
             existing_user = cursor.fetchone()
-            flash('회원가입 성공')
             
             if existing_user:
                 flash('아이디 중복')
-                cursor.close()
-                db.close()
-                return redirect(url_for('signup'))
+            else:
+                cursor.execute("INSERT INTO users (username, user_id, password, email, phone, birth, gender, height, weight) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", 
+                               (username, user_id, hashed_password, email, phone, birth, gender, height, weight))
+                db.commit()
+                flash('회원가입 성공')
+                return redirect(url_for('login'))
             
-            cursor.execute("INSERT INTO users (username, user_id, password, email, phone, birth, gender, height, weight) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", (username, user_id, hashed_password, email, phone, birth, gender, height, weight))
-            db.commit()
             cursor.close()
             db.close()
-            return redirect(url_for('login'))
         else:
             flash('비밀번호 불일치')
-            return redirect(url_for('signup'))
             
     return render_template('signup.html')
 
@@ -94,16 +93,17 @@ def login():
         cursor = db.cursor(dictionary=True)
         cursor.execute("SELECT * FROM users WHERE user_id = %s", (user_id,))
         user = cursor.fetchone()
-        cursor.close()
-        db.close()
-
+        
         if user and check_password_hash(user['password'], password):
             session['id'] = user['id']
             session['username'] = user['username']
             return redirect(url_for('main'))
         else:
             flash('로그인 실패')
-            return redirect(url_for('login'))
+        
+        cursor.close()
+        db.close()
+        
     return render_template('login.html')
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -161,13 +161,10 @@ def memo(year, month, day):
     exercises_detail = {}
     for exercise in exercises:
         cursor.execute("""
-            SELECT exercise_name, exercise_set, exercise_weight , exercise_count
+            SELECT exercise_name, exercise_set, exercise_weight, exercise_count
             FROM exercise_items 
-            WHERE user_exercise_id IN (
-                SELECT id FROM user_exercises 
-                WHERE user_id = %s AND date = %s AND exercise_number = %s
-            )
-        """, (user_id, date, exercise['exercise_number']))
+            WHERE user_exercise_id = %s
+        """, (exercise['id'],))
         exercises_detail[exercise['exercise_number']] = cursor.fetchall()
     
     cursor.execute("SELECT recommendation FROM exercise_recommendations WHERE user_id = %s AND date = %s ORDER BY id DESC LIMIT 1", (user_id, date))
@@ -274,7 +271,13 @@ def gpt_show():
         return redirect(url_for('login'))
     
     user_id = session['id']
-    date = request.args.get('date')
+    date = request.form.get('date')
+    
+    if not date:
+        flash('날짜를 선택하세요.')
+        return redirect(url_for('main'))
+    
+    year, month, day = map(int, date.split('-'))
     
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
@@ -293,7 +296,6 @@ def gpt_show():
     
     if not exercise_type_ids:
         flash('선택된 운동이 없습니다.')
-        year, month, day = map(int, date.split('-'))
         cursor.close()
         db.close()
         return redirect(url_for('memo', year=year, month=month, day=day))
@@ -337,7 +339,6 @@ def gpt_show():
         db.close()
 
     flash('추천 완성되었습니다.')
-    year, month, day = map(int, date.split('-'))
     return redirect(url_for('memo', year=year, month=month, day=day))
 
 
