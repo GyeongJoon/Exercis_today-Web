@@ -1,13 +1,13 @@
 -- `users` 테이블 생성
 CREATE TABLE `users` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `username` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL UNIQUE,
-    `user_id` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL UNIQUE,
-    `password` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    `email` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL UNIQUE,
-    `phone` VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL UNIQUE,
+    `username` VARCHAR(255) NOT NULL UNIQUE,
+    `user_id` VARCHAR(255) NOT NULL UNIQUE,
+    `password` VARCHAR(255) NOT NULL,
+    `email` VARCHAR(255) NOT NULL UNIQUE,
+    `phone` VARCHAR(20) NOT NULL UNIQUE,
     `birth` DATE NOT NULL,
-    `gender` ENUM('male', 'female', 'other') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    `gender` ENUM('male', 'female', 'other') NOT NULL,
     `height` DECIMAL(5,2) NOT NULL,
     `weight` DECIMAL(5,2) NOT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -18,8 +18,8 @@ CREATE TABLE `users` (
 -- `exercise_types` 테이블 생성
 CREATE TABLE `exercise_types` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL UNIQUE,
-    `description` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    `name` VARCHAR(255) NOT NULL UNIQUE,
+    `description` TEXT,
     PRIMARY KEY (`id`)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -41,7 +41,7 @@ CREATE TABLE `user_exercises` (
 CREATE TABLE `exercise_items` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `user_exercise_id` INT(11) NOT NULL,
-    `exercise_name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    `exercise_name` VARCHAR(255) NOT NULL,
     `exercise_set` INT(11) NOT NULL,
     `exercise_weight` DECIMAL(5,2) NOT NULL,
     `exercise_count` INT(11) NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE `exercise_recommendations` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `user_id` INT(11) NOT NULL,
     `date` DATE NOT NULL,
-    `recommendation` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    `recommendation` TEXT NOT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
