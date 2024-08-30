@@ -11,12 +11,13 @@ from chart import create_chart
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'joon'
 app.config['SESSION_TYPE'] = 'filesystem'
+app.config['JSON_AS_ASCII'] = False
 Session(app)
 
 db_config = {
     'user': 'joon',
     'password': '1234',
-    'host': 'localhost',
+    'host': 'db',
     'database': 'backend',
     'charset': 'utf8mb4',
     'collation': 'utf8mb4_unicode_ci'
@@ -151,13 +152,13 @@ def memo(year, month, day):
     cursor = db.cursor(dictionary=True)
     
     cursor.execute("""
-        SELECT et.id, et.description, ue.exercise_number
-        FROM exercise_types et
-        JOIN user_exercises ue ON et.id = ue.exercise_type_id
-        WHERE ue.user_id = %s AND ue.date = %s
+    SELECT ue.id, et.description, ue.exercise_number
+    FROM exercise_types et
+    JOIN user_exercises ue ON et.id = ue.exercise_type_id
+    WHERE ue.user_id = %s AND ue.date = %s
     """, (user_id, date))
     exercises = cursor.fetchall()
-    
+
     exercises_detail = {}
     for exercise in exercises:
         cursor.execute("""
@@ -165,7 +166,7 @@ def memo(year, month, day):
             FROM exercise_items 
             WHERE user_exercise_id = %s
         """, (exercise['id'],))
-        exercises_detail[exercise['exercise_number']] = cursor.fetchall()
+        exercises_detail[exercise['id']] = cursor.fetchall()
     
     cursor.execute("SELECT recommendation FROM exercise_recommendations WHERE user_id = %s AND date = %s ORDER BY id DESC LIMIT 1", (user_id, date))
     recommendation = cursor.fetchone()

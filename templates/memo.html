@@ -92,8 +92,8 @@
                     {% if exercises %}
                         {% for exercise in exercises %}
                             <h3>{{ exercise.description }}</h3>
-                            {% if exercises_detail[exercise.exercise_number] %}
-                                {% for detail in exercises_detail[exercise.exercise_number] %}
+                            {% if exercises_detail[exercise.id] %}
+                                {% for detail in exercises_detail[exercise.id] %}
                                     <p>{{ detail.exercise_name }} - {{ detail.exercise_set }} sets - {{ detail.exercise_weight }}kg - {{ detail.exercise_count }}times</p>
                                 {% endfor %}
                             {% else %}
