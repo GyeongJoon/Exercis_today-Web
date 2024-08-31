@@ -13,7 +13,7 @@ CREATE TABLE `users` (
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+);
 
 -- `exercise_types` 테이블 생성
 CREATE TABLE `exercise_types` (
@@ -21,7 +21,7 @@ CREATE TABLE `exercise_types` (
     `name` VARCHAR(255) NOT NULL UNIQUE,
     `description` TEXT,
     PRIMARY KEY (`id`)
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+);
 
 -- `user_exercises` 테이블 생성
 CREATE TABLE `user_exercises` (
@@ -35,7 +35,7 @@ CREATE TABLE `user_exercises` (
     PRIMARY KEY (`id`),
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`exercise_type_id`) REFERENCES `exercise_types`(`id`) ON DELETE CASCADE
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+);
 
 -- `exercise_items` 테이블 생성
 CREATE TABLE `exercise_items` (
@@ -49,7 +49,7 @@ CREATE TABLE `exercise_items` (
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`user_exercise_id`) REFERENCES `user_exercises`(`id`) ON DELETE CASCADE
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+);
 
 -- `exercise_recommendations` 테이블 생성
 CREATE TABLE `exercise_recommendations` (
@@ -60,7 +60,7 @@ CREATE TABLE `exercise_recommendations` (
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+);
 
 INSERT INTO exercise_types (name, description) VALUES 
 ('upper_body', '상체 전체 운동'),

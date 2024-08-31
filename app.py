@@ -7,24 +7,23 @@ from datetime import datetime
 from gpt import ask_chatgpt
 import pandas as pd
 from chart import create_chart
-import logging
-
-# 로그 설정
-logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'joon'
 app.config['SESSION_TYPE'] = 'filesystem'
-app.config['JSON_AS_ASCII'] = False
 Session(app)
+
+# 응답 인코딩 설정을 위한 after_request 핸들러 추가
+@app.after_request
+def add_header(response):
+    response.headers['Content-Type'] = 'text/html; charset=utf-8'
+    return response
 
 db_config = {
     'user': 'joon',
     'password': '1234',
     'host': 'db',
-    'database': 'backend',
-    'charset': 'utf8mb4',
-    'collation': 'utf8mb4_unicode_ci'
+    'database': 'backend'
 }
 
 def get_db_connection():
@@ -163,20 +162,6 @@ def memo(year, month, day):
     """, (user_id, date))
     exercises = cursor.fetchall()
     
-    for exercise in exercises:
-        try:
-            # UTF-8로 인코딩된 상태를 그대로 사용
-            description = exercise['description']
-            # 필요한 경우, UTF-8로 디코딩 (대부분의 경우 필요하지 않을 수 있음)
-            description_utf8 = description.encode('utf-8').decode('utf-8')
-            
-            print(description_utf8)
-        except UnicodeDecodeError as e:
-            print(f"Decoding error: {e}")
-            print(exercise['description'])
-
-
-
     exercises_detail = {}
     for exercise in exercises:
         cursor.execute("""
@@ -226,10 +211,10 @@ def update_exercise():
             user_exercise_id = cursor.lastrowid
             
             for set_number in range(1, 6):
-                exercise_name = request.form.get(f'exercise_name{exercise_number}_{set_number}', '').encode('utf-8')
-                exercise_set = request.form.get(f'exercise_set{exercise_number}_{set_number}', '').encode('utf-8')
-                exercise_weight = request.form.get(f'exercise_weight{exercise_number}_{set_number}', '').encode('utf-8')
-                exercise_count = request.form.get(f'exercise_count{exercise_number}_{set_number}', '').encode('utf-8')
+                exercise_name = request.form.get(f'exercise_name{exercise_number}_{set_number}', '')
+                exercise_set = request.form.get(f'exercise_set{exercise_number}_{set_number}', '')
+                exercise_weight = request.form.get(f'exercise_weight{exercise_number}_{set_number}', '')
+                exercise_count = request.form.get(f'exercise_count{exercise_number}_{set_number}', '')
                 
                 if exercise_name:
                     cursor.execute("INSERT INTO exercise_items (user_exercise_id, exercise_name, exercise_set, exercise_weight, exercise_count) VALUES (%s, %s, %s, %s, %s)",

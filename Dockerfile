@@ -7,13 +7,21 @@ WORKDIR /app
 # 종속성 파일을 작업 디렉토리로 복사
 COPY requirements.txt requirements.txt
 
-# 종속성 설치
-RUN pip install --no-cache-dir -r requirements.txt
+# 시스템 패키지 업데이트 및 필수 패키지 설치
 RUN apt-get update && apt-get install -y locales
+RUN apt-get install -y fonts-nanum
+
+# 로케일 설정
 RUN locale-gen ko_KR.UTF-8
-ENV LANG ko_KR.UTF-8
-ENV LANGUAGE ko_KR:ko
-ENV LC_ALL ko_KR.UTF-8
+ENV LANGUAGE=ko_KR:ko
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+
+# Python 패키지 설치
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 불필요한 파일 제거
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # 애플리케이션 파일과 정적 파일을 작업 디렉토리로 복사
 COPY app.py app.py 
@@ -22,7 +30,10 @@ COPY gpt.py gpt.py
 COPY templates /app/templates
 COPY static /app/static
 
-# 환경 변수 설정
+# 포트 설정
+EXPOSE 5002
+
+# 환경 변수 설정 (보안 고려 필요)
 ENV OPENAI_API_KEY="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"
 
 # 애플리케이션 실행

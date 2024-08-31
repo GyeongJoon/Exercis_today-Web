@@ -7,7 +7,7 @@ def create_chart(df, title, xlabel, ylabel, x_column, y_column, color='blue', fi
     font_path = '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'
     
     font_name = font_manager.FontProperties(fname=font_path).get_name()
-    rc('font', family=font_name)
+    rc('font', family=font_manager.FontProperties(fname=font_path).get_name())
     
     plt.figure(figsize=(8, 5))
     plt.bar(df[x_column], df[y_column], color=color)
