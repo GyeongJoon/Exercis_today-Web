@@ -22,7 +22,7 @@ def add_header(response):
 db_config = {
     'user': 'joon',
     'password': '1234',
-    'host': 'db',
+    'host': 'localhost',
     'database': 'backend'
 }
 
