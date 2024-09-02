@@ -105,19 +105,11 @@
 
 Docker를 처음 사용하면서, Docker 컨테이너 내에서 실행되는 프로젝트가 기존의 환경에서와는 다르게 다양한 문제를 일으킨다는 것을 경험했습니다. 특히, 로그인 기능, 추천 기능, 한글 깨짐, 시각화 등 여러 기능에서 예상치 못한 오류가 발생했습니다. Docker에 대해 잘 알지 못한 상태에서 이미지를 빌드하고 컨테이너를 실행했을 때 문제가 발생했고, 이를 해결하는 과정에서 Docker 네트워킹 방법에 대해 배우게 되었습니다. 그중에서도 가장 많이 사용되는 docker-compose를 활용하여 프로젝트를 성공적으로 구현할 수 있었습니다. 이에 대한 해결 방법을 여러 시도 끝에 찾게 되었고, 이 과정에서 얻은 경험을 아래 URL에서 자세히 정리했습니다:
 
- [\[Docker\] Docker 네트워킹
-
-1. 사용자 정의 네트워크를 사용하는 방법설명:Docker에서 사용자 정의 네트워크를 생성하여 여러 컨테이너를 동일한 네트워크에 배치하는 방법입니다. 이를 통해 컨테이너 간의 통신을 쉽게
-
-77hjoon.tistory.com](https://77hjoon.tistory.com/35)
+https://77hjoon.tistory.com/35
 
 또한, 가장 많은 시간을 할애했던 오류는 한글 깨짐 문제였습니다.
 
- [도커 한글 깨짐(sql)
-
-https://better-tomorrow-than-today.tistory.com/76 Docker Compose에서 Mysql 한글 초기화 데이터는 왜 깨질까?1. 배경설명 지난 며칠간 사이드프로젝트 DB 컨테이너화 한다고 docker-compose.yml 설정 중에 한글 초기화
-
-77hjoon.tistory.com](https://77hjoon.tistory.com/36)
+https://77hjoon.tistory.com/36
 
 Docker를 사용한 프로젝트 구축 과정은 어려움이 많았지만, 이를 통해 많은 것을 배울 수 있었고, Docker 환경에 대한 이해도도 크게 향상되었습니다.
 
