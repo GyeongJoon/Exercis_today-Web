@@ -13,16 +13,10 @@ app.config['SECRET_KEY'] = 'joon'
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 
-# 응답 인코딩 설정을 위한 after_request 핸들러 추가
-@app.after_request
-def add_header(response):
-    response.headers['Content-Type'] = 'text/html; charset=utf-8'
-    return response
-
 db_config = {
     'user': 'joon',
     'password': '1234',
-    'host': 'localhost',
+    'host': 'db',
     'database': 'backend'
 }
 
@@ -41,7 +35,6 @@ def fetch_data(query, params=None):
     finally:
         cursor.close()
         connection.close()
-    
     return records
 
 @app.route('/')
