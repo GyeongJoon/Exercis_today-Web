@@ -148,10 +148,10 @@ def memo(year, month, day):
     cursor = db.cursor(dictionary=True)
     
     cursor.execute("""
-    SELECT ue.id, et.description, ue.exercise_number
-    FROM exercise_types et
-    JOIN user_exercises ue ON et.id = ue.exercise_type_id
-    WHERE ue.user_id = %s AND ue.date = %s
+        SELECT ue.id, et.description, ue.exercise_number
+        FROM exercise_types et
+        JOIN user_exercises ue ON et.id = ue.exercise_type_id
+        WHERE ue.user_id = %s AND ue.date = %s
     """, (user_id, date))
     exercises = cursor.fetchall()
     
