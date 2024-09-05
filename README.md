@@ -85,12 +85,20 @@
 ![스크린샷 2024-09-02 154838](https://github.com/user-attachments/assets/39395da8-006a-4cc6-90ae-c17514704fa4)
 
 **2) 사용자별 운동 일정 관리 기능**
+![스크린샷 2024-09-02 155129](https://github.com/user-attachments/assets/bcf9b4c0-0e1e-4e5f-acf2-ee25c9647bdd)
 
 **3) 운동일정 등록, 수정, 삭제 기능**
+![스크린샷 2024-09-02 155657](https://github.com/user-attachments/assets/e5649c7c-7558-4bdd-8032-a071fd966ae7)
+![스크린샷 2024-09-02 155707](https://github.com/user-attachments/assets/21404662-2fb1-4baa-a563-12b25e6ef715)
+
 
 **4) 사용자별 운동종목당 운동량 시각화 기능**
+![스크린샷 2024-09-02 160038](https://github.com/user-attachments/assets/f906ef7c-711b-4f7d-a661-85a8fa777712)
+
 
 **5) 운동 추천 기능**
+![스크린샷 2024-09-02 160226](https://github.com/user-attachments/assets/11c4c3b6-1eb0-4a1d-8ee2-c8ea3a9b8c5e)
+![스크린샷 2024-09-02 160231](https://github.com/user-attachments/assets/8f344772-b71e-43de-aeb2-476457ef4ff0)
 
 ---
 
