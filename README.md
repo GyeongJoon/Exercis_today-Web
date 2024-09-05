@@ -84,8 +84,11 @@
 <td style="width: 50%; text-align: center;">회원가입</td>
 </tr>
 <tr>
-<td style="width: 50%;">[##_Image|kage@sY7j3/btsJpg5gXU5/u82yS2Pzn9OU7ikPQ5qrG1/img.png|CDM|1.3|{"originWidth":1919,"originHeight":1015}_##]</td>
-<td style="width: 50%;">[##_Image|kage@Poqeu/btsJoYcKWeo/IOYyor80nSotXb3gKyBcdk/img.png|CDM|1.3|{"originWidth":1919,"originHeight":1016}_##][##_Image|kage@lw3RA/btsJnftsplx/cKHbUlWxWVkARe3TYUnbck/img.png|CDM|1.3|{"originWidth":1919,"originHeight":1018}_##]</td>
+<td style="width: 50%;">![스크린샷 2024-09-02 154735](https://github.com/user-attachments/assets/e7518c5f-b8fd-424c-81fb-291b2a4dea4d)
+</td>
+<td style="width: 50%;">![스크린샷 2024-09-02 154827](https://github.com/user-attachments/assets/bb8bbcff-f574-4d2c-a758-88b8603f7227)![스크린샷 2024-09-02 154838](https://github.com/user-attachments/assets/39395da8-006a-4cc6-90ae-c17514704fa4)
+
+</td>
 </tr>
 </tbody>
 </table>
