@@ -77,21 +77,12 @@
 
 **1) 로그인/회원가입 기능**
 
-<table style="border-collapse: collapse; width: 100%;" border="1" data-ke-align="alignLeft">
-<tbody>
-<tr>
-<td style="width: 50%; text-align: center;">로그인</td>
-<td style="width: 50%; text-align: center;">회원가입</td>
-</tr>
-<tr>
-<td style="width: 50%;">![스크린샷 2024-09-02 154735](https://github.com/user-attachments/assets/e7518c5f-b8fd-424c-81fb-291b2a4dea4d)
-</td>
-<td style="width: 50%;">![스크린샷 2024-09-02 154827](https://github.com/user-attachments/assets/bb8bbcff-f574-4d2c-a758-88b8603f7227)![스크린샷 2024-09-02 154838](https://github.com/user-attachments/assets/39395da8-006a-4cc6-90ae-c17514704fa4)
+로그인
+![스크린샷 2024-09-02 154735](https://github.com/user-attachments/assets/e7518c5f-b8fd-424c-81fb-291b2a4dea4d)
 
-</td>
-</tr>
-</tbody>
-</table>
+회원가입
+![스크린샷 2024-09-02 154827](https://github.com/user-attachments/assets/bb8bbcff-f574-4d2c-a758-88b8603f7227)
+![스크린샷 2024-09-02 154838](https://github.com/user-attachments/assets/39395da8-006a-4cc6-90ae-c17514704fa4)
 
 **2) 사용자별 운동 일정 관리 기능**
 
