@@ -77,6 +77,19 @@
 
 **1) 로그인/회원가입 기능**
 
+<table style="border-collapse: collapse; width: 100%;" border="1" data-ke-align="alignLeft">
+<tbody>
+<tr>
+<td style="width: 50%; text-align: center;">로그인</td>
+<td style="width: 50%; text-align: center;">회원가입</td>
+</tr>
+<tr>
+<td style="width: 50%;">[##_Image|kage@sY7j3/btsJpg5gXU5/u82yS2Pzn9OU7ikPQ5qrG1/img.png|CDM|1.3|{"originWidth":1919,"originHeight":1015}_##]</td>
+<td style="width: 50%;">[##_Image|kage@Poqeu/btsJoYcKWeo/IOYyor80nSotXb3gKyBcdk/img.png|CDM|1.3|{"originWidth":1919,"originHeight":1016}_##][##_Image|kage@lw3RA/btsJnftsplx/cKHbUlWxWVkARe3TYUnbck/img.png|CDM|1.3|{"originWidth":1919,"originHeight":1018}_##]</td>
+</tr>
+</tbody>
+</table>
+
 **2) 사용자별 운동 일정 관리 기능**
 
 **3) 운동일정 등록, 수정, 삭제 기능**
